@@ -22,3 +22,4 @@ print("CUDA available:", torch.cuda.is_available())
 
 print()
 print("Everything is installed correctly!")
+print("end of test_setup.py")
