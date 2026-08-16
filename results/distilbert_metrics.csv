@@ -1,0 +1,2 @@
+Model,Accuracy,Precision,Recall,F1,Training_Time_Seconds,Prediction_Time_Seconds,Training_Samples,Validation_Samples,Test_Samples
+DistilBERT,0.7276,0.7164793780297771,0.7276,0.7183230574031441,8603.655681848526,780.5938591957092,12000,3000,5000

@@ -1,0 +1,2 @@
+Model,Accuracy,Precision,Recall,F1,Fusion_Training_Time_Seconds,DistilBERT_Test_Inference_Seconds,Fusion_Prediction_Time_Seconds,Training_Samples,Validation_Samples,Test_Samples
+DistilBERT + Sentiment,0.7098,0.7184237486554057,0.7098,0.7134648748823357,0.17935943603515625,88.31825971603394,0.0008039474487304688,12000,3000,5000
