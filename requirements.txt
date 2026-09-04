@@ -1,12 +1,9 @@
 torch
 transformers
-datasets
-accelerate
 pandas
 numpy
 scikit-learn
 matplotlib
-nltk
-vaderSentiment
 streamlit
-jupyter
+vaderSentiment
+joblib

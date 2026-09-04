@@ -1,0 +1,7 @@
+Test_ID,Description,Input_Text,Predicted_Label,Confidence_Percent,Sentiment,Sentiment_Compound,Status
+1,Normal factual-style news text,Scientists announced a new medical breakthrough after a five-year international study involving hospitals across Europe.,True,50.41,Neutral,0.0,PASS
+2,Sensational misleading-style text,BREAKING: The government is secretly controlling the weather using hidden satellites!,Misleading Content,34.65,Neutral,0.0,PASS
+3,Satirical-style text,Local man becomes billionaire after discovering that sleeping 14 hours a day increases productivity.,True,97.09,Neutral,0.0,PASS
+4,Promotional-style text,This sponsored article presents the newest smartphone as the greatest technological innovation of the year.,True,94.91,Positive,0.7783,PASS
+5,Neutral news-style text,The city council approved the new transportation plan after a public meeting on Monday.,True,73.19,Positive,0.4215,PASS
+6,Manipulation-related text,Officials manipulated the image before publishing it to make the crowd appear significantly larger.,True,77.24,Negative,-0.3818,PASS
