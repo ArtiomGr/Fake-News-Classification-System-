@@ -1,45 +1,50 @@
-# Fake News Category Classification Using Artificial Intelligence
+# TruthLens AI
+## AI-Based Fake News Classification System
 
-Final Project - Ruppin Academic Center  
-Department of Computer & Electrical Engineering
+Final Engineering Project  
+Ruppin Academic Center  
+Department of Electrical & Computer Engineering
+Muhammed Zedan
+Artium Grenberg
 
-## Project Description
+---
 
-This project develops an AI-based system for classifying fake news text into six categories:
+## Project Overview
 
-1. Native Advertising
-2. News Satire
-3. Propaganda
-4. Manipulation
-5. News Parody
-6. Fabrication
+TruthLens AI is an artificial-intelligence-based system for classifying online text into six information categories using Natural Language Processing.
 
-The system combines Natural Language Processing and Sentiment Analysis.
+The final system uses a fine-tuned DistilBERT model for text classification and VADER for sentiment analysis.
 
-## Models
+The application provides:
 
-The project will compare:
+- Predicted category
+- Prediction confidence
+- Probability distribution across all six classes
+- Sentiment classification
+- Sentiment score
+- Model comparison results
+- Interactive Streamlit user interface
 
-- TF-IDF + Logistic Regression
-- DistilBERT
-- DistilBERT + Sentiment Analysis
+---
 
-## Evaluation Metrics
+## Classification Categories
 
-The models will be evaluated using:
+The system classifies text into six categories:
 
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- Confusion Matrix
-- Prediction Response Time
+1. True
+2. Satire
+3. False Connection
+4. Imposter Content
+5. Manipulated Content
+6. Misleading Content
 
-## Technologies
+---
 
-- Python
-- PyTorch
-- Hugging Face Transformers
-- Scikit-learn
-- VADER Sentiment Analysis
-- Streamlit
+## Dataset
+
+The project uses the Fakeddit dataset.
+
+The model uses the textual field:
+
+```text
+clean_title

@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 from pathlib import Path
 
 from transformers import (
@@ -25,7 +24,7 @@ device = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
 )
 
-print("Loading model...")
+print(f"Loading model on {device}...")
 
 tokenizer = AutoTokenizer.from_pretrained(
     MODEL_DIR
@@ -42,10 +41,7 @@ sentiment_analyzer = SentimentIntensityAnalyzer()
 
 
 def analyze_sentiment(text):
-
-    scores = sentiment_analyzer.polarity_scores(
-        text
-    )
+    scores = sentiment_analyzer.polarity_scores(text)
 
     compound = scores["compound"]
 
@@ -66,6 +62,10 @@ def analyze_sentiment(text):
 
 
 def predict_text(text):
+    text = text.strip()
+
+    if not text:
+        raise ValueError("Input text cannot be empty.")
 
     encoded = tokenizer(
         text,
@@ -81,42 +81,44 @@ def predict_text(text):
     }
 
     with torch.no_grad():
+        output = model(**encoded)
 
-        output = model(
-            **encoded
-        )
-
-        probabilities = torch.softmax(
+        probabilities_tensor = torch.softmax(
             output.logits,
             dim=1
         )[0]
 
     predicted_class = int(
         torch.argmax(
-            probabilities
+            probabilities_tensor
         ).item()
     )
 
     confidence = float(
-        probabilities[predicted_class]
-        .item()
+        probabilities_tensor[
+            predicted_class
+        ].item()
     )
 
     probabilities = (
-        probabilities
+        probabilities_tensor
         .cpu()
-        .numpy()
+        .tolist()
     )
 
-    sentiment = analyze_sentiment(
-        text
-    )
+    probability_by_label = {
+        LABELS[i]: float(probabilities[i])
+        for i in range(len(probabilities))
+    }
+
+    sentiment = analyze_sentiment(text)
 
     return {
         "predicted_class": predicted_class,
         "predicted_label": LABELS[predicted_class],
         "confidence": confidence,
         "probabilities": probabilities,
+        "probability_by_label": probability_by_label,
         "sentiment": sentiment
     }
 
@@ -128,7 +130,6 @@ if __name__ == "__main__":
     print("=" * 70)
 
     while True:
-
         text = input(
             "\nEnter news text "
             "(or type EXIT):\n> "
@@ -138,56 +139,52 @@ if __name__ == "__main__":
             break
 
         if not text.strip():
-
-            print(
-                "Please enter valid text."
-            )
-
+            print("Please enter valid text.")
             continue
 
-        result = predict_text(
-            text
-        )
+        try:
+            result = predict_text(text)
 
-        print("\nRESULT")
-        print("-" * 50)
-
-        print(
-            "Predicted class:",
-            result["predicted_class"]
-        )
-
-        print(
-            "Predicted label:",
-            result["predicted_label"]
-        )
-
-        print(
-            "Confidence:",
-            f"{result['confidence'] * 100:.2f}%"
-        )
-
-        print(
-            "\nClass probabilities:"
-        )
-
-        for i, probability in enumerate(
-            result["probabilities"]
-        ):
+            print("\nRESULT")
+            print("-" * 50)
 
             print(
-                f"Class {i}: "
-                f"{probability * 100:.2f}%"
+                "Predicted class:",
+                result["predicted_class"]
             )
 
-        print(
-            "\nSentiment:",
-            result["sentiment"]["label"]
-        )
+            print(
+                "Predicted label:",
+                result["predicted_label"]
+            )
 
-        print(
-            "Compound sentiment:",
-            result["sentiment"]["compound"]
-        )
+            print(
+                "Confidence:",
+                f"{result['confidence'] * 100:.2f}%"
+            )
+
+            print("\nClass probabilities:")
+
+            for label, probability in (
+                result["probability_by_label"]
+                .items()
+            ):
+                print(
+                    f"{label}: "
+                    f"{probability * 100:.2f}%"
+                )
+
+            print(
+                "\nSentiment:",
+                result["sentiment"]["label"]
+            )
+
+            print(
+                "Compound sentiment:",
+                result["sentiment"]["compound"]
+            )
+
+        except Exception as error:
+            print("Error:", error)
 
         print("\n" + "=" * 70)
