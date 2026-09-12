@@ -9,7 +9,27 @@ from transformers import (
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
-MODEL_DIR = Path("models/distilbert")
+# ============================================================
+# Project and model paths
+# ============================================================
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+LOCAL_MODEL_DIR = PROJECT_ROOT / "models" / "distilbert"
+
+HUGGING_FACE_MODEL = "Artiomg1/truthlens-bert"
+
+# Use the local model when it exists.
+# Otherwise, download the model from Hugging Face.
+MODEL_SOURCE = (
+    str(LOCAL_MODEL_DIR)
+    if LOCAL_MODEL_DIR.exists()
+    else HUGGING_FACE_MODEL
+)
+
+
+# ============================================================
+# Classification labels
+# ============================================================
 
 LABELS = {
     0: "True",
@@ -20,27 +40,50 @@ LABELS = {
     5: "Misleading Content"
 }
 
+
+# ============================================================
+# Device configuration
+# ============================================================
+
 device = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
 )
 
-print(f"Loading model on {device}...")
+print(f"Loading model from: {MODEL_SOURCE}")
+print(f"Loading model on device: {device}")
+
+
+# ============================================================
+# Load tokenizer and trained model
+# ============================================================
 
 tokenizer = AutoTokenizer.from_pretrained(
-    MODEL_DIR
+    MODEL_SOURCE
 )
 
 model = AutoModelForSequenceClassification.from_pretrained(
-    MODEL_DIR
+    MODEL_SOURCE
 )
 
 model.to(device)
 model.eval()
 
+
+# ============================================================
+# Sentiment analyzer
+# ============================================================
+
 sentiment_analyzer = SentimentIntensityAnalyzer()
 
 
 def analyze_sentiment(text):
+    """
+    Analyze the sentiment of the provided text using VADER.
+
+    Returns:
+        Dictionary containing the sentiment label and scores.
+    """
+
     scores = sentiment_analyzer.polarity_scores(text)
 
     compound = scores["compound"]
@@ -62,6 +105,18 @@ def analyze_sentiment(text):
 
 
 def predict_text(text):
+    """
+    Classify text using the trained DistilBERT model and independently
+    analyze its sentiment using VADER.
+
+    Args:
+        text: News headline, article or social-media post.
+
+    Returns:
+        Dictionary containing the predicted category, confidence,
+        probability distribution and sentiment analysis.
+    """
+
     text = text.strip()
 
     if not text:
@@ -123,6 +178,10 @@ def predict_text(text):
     }
 
 
+# ============================================================
+# Command-line interface
+# ============================================================
+
 if __name__ == "__main__":
 
     print("\n" + "=" * 70)
@@ -166,8 +225,7 @@ if __name__ == "__main__":
             print("\nClass probabilities:")
 
             for label, probability in (
-                result["probability_by_label"]
-                .items()
+                result["probability_by_label"].items()
             ):
                 print(
                     f"{label}: "
