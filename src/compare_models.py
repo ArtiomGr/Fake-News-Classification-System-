@@ -8,7 +8,10 @@ print("=" * 70)
 print("MODEL COMPARISON")
 print("=" * 70)
 
+# -------------------------------------------------
 # Load metrics
+# -------------------------------------------------
+
 baseline = pd.read_csv(
     RESULTS_DIR / "baseline_metrics.csv"
 )
@@ -17,11 +20,19 @@ distilbert = pd.read_csv(
     RESULTS_DIR / "distilbert_metrics.csv"
 )
 
+bert = pd.read_csv(
+    RESULTS_DIR / "BERT_metrics.csv"
+)
+
 fusion = pd.read_csv(
     RESULTS_DIR / "fusion_metrics.csv"
 )
 
+
+# -------------------------------------------------
 # Keep common metrics
+# -------------------------------------------------
+
 baseline_row = {
     "Model": "TF-IDF + Logistic Regression",
     "Accuracy": baseline.loc[0, "Accuracy"],
@@ -38,6 +49,14 @@ distilbert_row = {
     "F1": distilbert.loc[0, "F1"]
 }
 
+bert_row = {
+    "Model": "BERT",
+    "Accuracy": bert.loc[0, "Accuracy"],
+    "Precision": bert.loc[0, "Precision"],
+    "Recall": bert.loc[0, "Recall"],
+    "F1": bert.loc[0, "F1"]
+}
+
 fusion_row = {
     "Model": "DistilBERT + Sentiment",
     "Accuracy": fusion.loc[0, "Accuracy"],
@@ -46,9 +65,15 @@ fusion_row = {
     "F1": fusion.loc[0, "F1"]
 }
 
+
+# -------------------------------------------------
+# Create comparison table
+# -------------------------------------------------
+
 comparison = pd.DataFrame([
     baseline_row,
     distilbert_row,
+    bert_row,
     fusion_row
 ])
 
@@ -66,11 +91,12 @@ comparison.to_csv(
     index=False
 )
 
+
 # -------------------------------------------------
 # Accuracy graph
 # -------------------------------------------------
 
-plt.figure(figsize=(9, 6))
+plt.figure(figsize=(10, 6))
 
 plt.bar(
     comparison["Model"],
@@ -119,7 +145,7 @@ plt.close()
 # F1 graph
 # -------------------------------------------------
 
-plt.figure(figsize=(9, 6))
+plt.figure(figsize=(10, 6))
 
 plt.bar(
     comparison["Model"],
@@ -181,7 +207,7 @@ comparison_plot = comparison.set_index(
 
 comparison_plot.plot(
     kind="bar",
-    figsize=(11, 7)
+    figsize=(12, 7)
 )
 
 plt.title(
@@ -240,11 +266,40 @@ print(
     f"({best_f1_row['F1']:.4f})"
 )
 
+
+# -------------------------------------------------
+# Save summary
+# -------------------------------------------------
+
+summary = pd.DataFrame(
+    {
+        "Metric": [
+            "Best Accuracy Model",
+            "Best Accuracy",
+            "Best F1 Model",
+            "Best F1"
+        ],
+        "Value": [
+            best_accuracy_row["Model"],
+            best_accuracy_row["Accuracy"],
+            best_f1_row["Model"],
+            best_f1_row["F1"]
+        ]
+    }
+)
+
+summary.to_csv(
+    RESULTS_DIR / "best_model_summary.csv",
+    index=False
+)
+
+
 print("\nSaved:")
 print("results/model_comparison.csv")
 print("results/accuracy_comparison.png")
 print("results/f1_comparison.png")
 print("results/overall_model_comparison.png")
+print("results/best_model_summary.csv")
 
 print("\n" + "=" * 70)
 print("MODEL COMPARISON COMPLETED SUCCESSFULLY")
