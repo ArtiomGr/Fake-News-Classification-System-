@@ -16,7 +16,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 LOCAL_MODEL_DIR = PROJECT_ROOT / "models" / "distilbert"
 
-HUGGING_FACE_MODEL = "Artiomg1/truthlens-bert"
+HUGGING_FACE_MODEL = "Artiomg1/truthlens-bert-base"
 
 # Use the local model when it exists.
 # Otherwise, download the model from Hugging Face.
