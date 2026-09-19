@@ -7,3 +7,4 @@ datasets
 matplotlib
 streamlit
 vaderSentiment
+huggingface_hub
