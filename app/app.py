@@ -23,6 +23,10 @@ from predict import predict_sentiment, predict_text
 # Page configuration
 # ============================================================
 
+# ============================================================
+# Page configuration
+# ============================================================
+
 st.set_page_config(
     page_title="TruthLens AI",
     page_icon="🧠",
