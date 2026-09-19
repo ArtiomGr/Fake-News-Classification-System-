@@ -16,8 +16,12 @@ RESULTS_DIR = PROJECT_ROOT / "results"
 if str(SRC_DIR) not in sys.path:
     sys.path.append(str(SRC_DIR))
 
-from predict import predict_text
+from predict import predict_sentiment, predict_text
 
+
+# ============================================================
+# Page configuration
+# ============================================================
 
 # ============================================================
 # Page configuration
@@ -32,29 +36,49 @@ st.set_page_config(
 
 
 # ============================================================
-# Custom CSS
+# Constants
+# ============================================================
+
+LABELS = [
+    "True",
+    "Satire",
+    "False Connection",
+    "Imposter Content",
+    "Manipulated Content",
+    "Misleading Content"
+]
+
+ALLOWED_COMPARISON_MODELS = {
+    "BERT",
+    "DistilBERT",
+    "TF-IDF + Logistic Regression",
+    "Logistic Regression"
+}
+
+
+# ============================================================
+# CSS
 # ============================================================
 
 st.markdown(
     """
     <style>
 
-    /* Main background */
     .stApp {
         background:
-            radial-gradient(circle at 10% 10%, rgba(37,99,235,0.10), transparent 25%),
-            radial-gradient(circle at 90% 15%, rgba(124,58,237,0.08), transparent 25%),
+            radial-gradient(circle at 10% 10%,
+            rgba(37,99,235,0.10), transparent 25%),
+            radial-gradient(circle at 90% 15%,
+            rgba(124,58,237,0.08), transparent 25%),
             #f7f9fc;
     }
 
-    /* Main container */
     .block-container {
-        max-width: 1250px;
+        max-width: 1300px;
         padding-top: 2rem;
         padding-bottom: 3rem;
     }
 
-    /* Hide Streamlit branding */
     #MainMenu {
         visibility: hidden;
     }
@@ -67,9 +91,8 @@ st.markdown(
         background: transparent !important;
     }
 
-    /* Hero */
     .hero {
-        padding: 35px 38px;
+        padding: 36px 40px;
         border-radius: 24px;
         background:
             linear-gradient(
@@ -78,7 +101,8 @@ st.markdown(
                 #172554 45%,
                 #312e81 100%
             );
-        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.18);
+        box-shadow:
+            0 18px 50px rgba(15,23,42,0.18);
         margin-bottom: 28px;
     }
 
@@ -106,43 +130,66 @@ st.markdown(
         font-size: 17px;
         margin-top: 12px;
         margin-bottom: 0;
-        max-width: 850px;
+        max-width: 950px;
         line-height: 1.6;
     }
 
-    /* Cards */
     .info-card {
         background: white;
         border: 1px solid #e5e7eb;
         border-radius: 18px;
         padding: 20px 22px;
-        box-shadow: 0 5px 22px rgba(15,23,42,0.05);
+        box-shadow:
+            0 5px 22px rgba(15,23,42,0.05);
         height: 100%;
     }
 
-    .result-card {
+    .model-card {
         background: white;
-        border-radius: 20px;
         border: 1px solid #e2e8f0;
-        padding: 24px;
-        box-shadow: 0 8px 25px rgba(15,23,42,0.06);
-        margin-bottom: 14px;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow:
+            0 7px 22px rgba(15,23,42,0.05);
+        margin-bottom: 12px;
+    }
+
+    .model-name {
+        font-size: 21px;
+        font-weight: 750;
+        color: #0f172a;
+        margin-bottom: 5px;
+    }
+
+    .model-label {
+        color: #475569;
+        font-size: 14px;
     }
 
     .section-title {
         font-size: 25px;
         font-weight: 750;
         color: #0f172a;
-        margin-top: 15px;
+        margin-top: 28px;
         margin-bottom: 12px;
     }
 
     .small-muted {
         color: #64748b;
         font-size: 14px;
+        line-height: 1.6;
     }
 
-    /* Text area */
+    .chunk-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 16px;
+        padding: 16px 18px;
+        margin-top: 12px;
+        margin-bottom: 20px;
+        color: #1e3a8a;
+    }
+
     .stTextArea textarea {
         border-radius: 15px !important;
         border: 1px solid #cbd5e1 !important;
@@ -153,40 +200,42 @@ st.markdown(
 
     .stTextArea textarea:focus {
         border-color: #2563eb !important;
-        box-shadow: 0 0 0 2px rgba(37,99,235,0.12) !important;
+        box-shadow:
+            0 0 0 2px rgba(37,99,235,0.12)
+            !important;
     }
 
-    /* Primary button */
     .stButton > button {
         border-radius: 12px;
         border: none;
         padding: 0.65rem 1.5rem;
         font-weight: 700;
-        background: linear-gradient(
-            90deg,
-            #2563eb,
-            #4f46e5
-        );
+        background:
+            linear-gradient(
+                90deg,
+                #2563eb,
+                #4f46e5
+            );
         color: white;
         transition: 0.2s ease;
     }
 
     .stButton > button:hover {
         transform: translateY(-1px);
-        box-shadow: 0 8px 18px rgba(37,99,235,0.22);
+        box-shadow:
+            0 8px 18px rgba(37,99,235,0.22);
         color: white;
     }
 
-    /* Metrics */
     div[data-testid="stMetric"] {
         background: white;
         border: 1px solid #e2e8f0;
         padding: 18px;
         border-radius: 16px;
-        box-shadow: 0 5px 18px rgba(15,23,42,0.04);
+        box-shadow:
+            0 5px 18px rgba(15,23,42,0.04);
     }
 
-    /* Sidebar */
     section[data-testid="stSidebar"] {
         background:
             linear-gradient(
@@ -204,18 +253,15 @@ st.markdown(
         border-color: rgba(255,255,255,0.12);
     }
 
-    /* Dataframe */
     div[data-testid="stDataFrame"] {
         border-radius: 12px;
         overflow: hidden;
     }
 
-    /* Tabs */
     button[data-baseweb="tab"] {
         font-weight: 650;
     }
 
-    /* Footer */
     .custom-footer {
         text-align: center;
         color: #64748b;
@@ -232,6 +278,121 @@ st.markdown(
 
 
 # ============================================================
+# Helper functions
+# ============================================================
+
+def probability_dataframe(result):
+    """Create a display dataframe from model probabilities."""
+
+    probability_map = result["probability_by_label"]
+
+    df = pd.DataFrame(
+        {
+            "Category": list(probability_map.keys()),
+            "Probability": [
+                value * 100
+                for value in probability_map.values()
+            ]
+        }
+    )
+
+    return (
+        df
+        .sort_values(
+            "Probability",
+            ascending=False
+        )
+        .reset_index(drop=True)
+    )
+
+
+def show_model_result(model_name, result):
+    """Display the result of one classifier."""
+
+    st.markdown(
+        f"""
+        <div class="model-card">
+            <div class="model-name">
+                {model_name}
+            </div>
+            <div class="model-label">
+                Independent model prediction
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(
+            "Predicted Category",
+            result["predicted_label"]
+        )
+
+    with col2:
+        st.metric(
+            "Confidence",
+            f"{result['confidence'] * 100:.2f}%"
+        )
+
+    with col3:
+
+        if "number_of_chunks" in result:
+            st.metric(
+                "Chunks Analyzed",
+                result["number_of_chunks"]
+            )
+        else:
+            st.metric(
+                "Processing",
+                "Full Text"
+            )
+
+    probability_df = probability_dataframe(
+        result
+    )
+
+    st.markdown("#### Class Probabilities")
+
+    st.bar_chart(
+        probability_df.set_index(
+            "Category"
+        )
+    )
+
+    display_df = probability_df.copy()
+
+    display_df["Probability"] = (
+        display_df["Probability"].map(
+            lambda value:
+            f"{value:.2f}%"
+        )
+    )
+
+    st.dataframe(
+        display_df,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    if len(probability_df) >= 2:
+
+        first = probability_df.iloc[0]
+        second = probability_df.iloc[1]
+
+        st.caption(
+            f"Highest probability: "
+            f"{first['Category']} "
+            f"({first['Probability']:.2f}%). "
+            f"Second highest: "
+            f"{second['Category']} "
+            f"({second['Probability']:.2f}%)."
+        )
+
+
+# ============================================================
 # Sidebar
 # ============================================================
 
@@ -240,23 +401,31 @@ with st.sidebar:
     st.markdown("## 🧠 TruthLens AI")
 
     st.caption(
-        "AI-Based Fake News Classification"
+        "Multi-Model Fake News Classification"
     )
 
     st.divider()
 
-    st.markdown("### Model")
+    st.markdown("### Classification Models")
 
-    st.write("**Architecture:** DistilBERT")
+    st.write("**1. BERT**")
+    st.write("**2. DistilBERT**")
+    st.write("**3. Logistic Regression**")
+
+    st.divider()
+
+    st.markdown("### System")
+
     st.write("**Classes:** 6")
-    st.write("**Sentiment:** VADER")
-    st.write("**Max tokens:** 128")
+    st.write("**Transformer input:** 128 tokens")
+    st.write("**Long text:** Automatic chunking")
+    st.write("**Comparison:** Same input, 3 models")
 
     st.divider()
 
     st.markdown("### Classification Labels")
 
-    labels = [
+    sidebar_labels = [
         "✅ True",
         "🎭 Satire",
         "🔗 False Connection",
@@ -265,43 +434,8 @@ with st.sidebar:
         "⚠️ Misleading Content"
     ]
 
-    for label in labels:
+    for label in sidebar_labels:
         st.write(label)
-
-    st.divider()
-
-    # Show final test performance if results file exists
-    metrics_file = (
-        RESULTS_DIR /
-        "distilbert_metrics.csv"
-    )
-
-    if metrics_file.exists():
-
-        try:
-
-            metrics_df = pd.read_csv(
-                metrics_file
-            )
-
-            row = metrics_df.iloc[0]
-
-            st.markdown(
-                "### Test Performance"
-            )
-
-            st.metric(
-                "Accuracy",
-                f"{row['Accuracy'] * 100:.2f}%"
-            )
-
-            st.metric(
-                "Weighted F1",
-                f"{row['F1']:.4f}"
-            )
-
-        except Exception:
-            pass
 
     st.divider()
 
@@ -312,22 +446,22 @@ with st.sidebar:
 
 
 # ============================================================
-# Hero section
+# Hero
 # ============================================================
 
 st.markdown(
     """
 <div class="hero">
-<div class="hero-badge">AI • NLP • Fake News Detection</div>
+<div class="hero-badge">AI • NLP • MODEL COMPARISON</div>
 <h1>TruthLens AI</h1>
-<p>An intelligent text-analysis system that uses a fine-tuned DistilBERT model to classify online content into six information categories, while independently analyzing its emotional sentiment.</p>
+<p>A multi-model fake news classification system comparing BERT, DistilBERT and Logistic Regression on the same input. Long texts are automatically processed using token-based chunking.</p>
 </div>
 """,
     unsafe_allow_html=True
 )
 
 # ============================================================
-# Information cards
+# Model information
 # ============================================================
 
 info1, info2, info3 = st.columns(3)
@@ -337,10 +471,11 @@ with info1:
     st.markdown(
         """
         <div class="info-card">
-            <h3>🧠 Transformer AI</h3>
+            <h3>🧠 BERT</h3>
             <p class="small-muted">
-                Fine-tuned DistilBERT performs semantic text
-                classification using contextual language understanding.
+                A fine-tuned Transformer model that uses
+                bidirectional contextual representations
+                for six-class text classification.
             </p>
         </div>
         """,
@@ -352,10 +487,11 @@ with info2:
     st.markdown(
         """
         <div class="info-card">
-            <h3>📊 Six Categories</h3>
+            <h3>⚡ DistilBERT</h3>
             <p class="small-muted">
-                The system provides a probability distribution across
-                all six classification labels, not only the final class.
+                A lighter Transformer architecture used
+                to compare classification performance and
+                computational efficiency with BERT.
             </p>
         </div>
         """,
@@ -367,10 +503,11 @@ with info3:
     st.markdown(
         """
         <div class="info-card">
-            <h3>💬 Sentiment Analysis</h3>
+            <h3>📊 Logistic Regression</h3>
             <p class="small-muted">
-                VADER independently evaluates the emotional polarity of
-                the submitted text as positive, neutral or negative.
+                A TF-IDF based traditional machine-learning
+                baseline used to measure the benefit of
+                Transformer-based classification.
             </p>
         </div>
         """,
@@ -379,28 +516,29 @@ with info3:
 
 
 # ============================================================
-# Input section
+# Input
 # ============================================================
 
 st.markdown(
-    '<div class="section-title">Analyze News Content</div>',
+    '<div class="section-title">'
+    'Analyze News Content'
+    '</div>',
     unsafe_allow_html=True
 )
 
 st.caption(
-    "Paste a headline, social-media post or short news article below."
+    "Paste a headline, post or full article. "
+    "The same text will be analyzed by all three models."
 )
 
 text = st.text_area(
     "News text",
-    height=190,
+    height=230,
     placeholder=(
-        "Example: Scientists announced a major medical "
-        "breakthrough following a five-year international study..."
+        "Paste the text you want to classify here..."
     ),
     label_visibility="collapsed"
 )
-
 
 button_col, clear_col, space_col = st.columns(
     [1, 1, 5]
@@ -420,7 +558,6 @@ with clear_col:
         use_container_width=True
     )
 
-
 if clear_button:
     st.rerun()
 
@@ -434,7 +571,7 @@ if analyze_button:
     if not text.strip():
 
         st.warning(
-            "Please enter some text before running the analysis."
+            "Please enter text before running the analysis."
         )
 
     else:
@@ -442,317 +579,236 @@ if analyze_button:
         try:
 
             with st.spinner(
-                "TruthLens AI is analyzing the text..."
+                "Running BERT, DistilBERT and "
+                "Logistic Regression..."
             ):
 
-                result = predict_text(
-                    text
-                )
+                results = predict_text(text)
 
             st.markdown(
-                '<div class="section-title">Analysis Result</div>',
+                '<div class="section-title">'
+                'Multi-Model Analysis'
+                '</div>',
                 unsafe_allow_html=True
             )
 
-            # ------------------------------------------------
-            # Main metrics
-            # ------------------------------------------------
+            # --------------------------------------------
+            # Quick comparison
+            # --------------------------------------------
 
-            metric1, metric2, metric3 = st.columns(
-                3
-            )
+            quick1, quick2, quick3 = st.columns(3)
 
-            with metric1:
+            model_order = [
+                "BERT",
+                "DistilBERT",
+                "Logistic Regression"
+            ]
 
-                st.metric(
-                    "Predicted Category",
-                    result[
-                        "predicted_label"
-                    ]
-                )
+            quick_columns = [
+                quick1,
+                quick2,
+                quick3
+            ]
 
-            with metric2:
+            for column, model_name in zip(
+                quick_columns,
+                model_order
+            ):
 
-                st.metric(
-                    "Model Confidence",
-                    (
-                        f"{result['confidence'] * 100:.2f}%"
+                result = results[model_name]
+
+                with column:
+
+                    st.markdown(
+                        f"### {model_name}"
                     )
-                )
-
-            with metric3:
-
-                sentiment_label = (
-                    result["sentiment"]["label"]
-                )
-
-                st.metric(
-                    "Sentiment",
-                    sentiment_label
-                )
-
-            st.markdown("")
-
-            # ------------------------------------------------
-            # Tabs
-            # ------------------------------------------------
-
-            tab1, tab2, tab3 = st.tabs(
-                [
-                    "📊 Classification",
-                    "💬 Sentiment",
-                    "🔬 Technical Details"
-                ]
-            )
-
-
-            # =================================================
-            # Classification tab
-            # =================================================
-
-            with tab1:
-
-                st.markdown(
-                    "### Category Probabilities"
-                )
-
-                if (
-                    "probability_by_label"
-                    in result
-                ):
-
-                    probability_df = pd.DataFrame(
-                        {
-                            "Category": list(
-                                result[
-                                    "probability_by_label"
-                                ].keys()
-                            ),
-                            "Probability": [
-                                value * 100
-                                for value in result[
-                                    "probability_by_label"
-                                ].values()
-                            ]
-                        }
-                    )
-
-                else:
-
-                    fallback_labels = [
-                        "True",
-                        "Satire",
-                        "False Connection",
-                        "Imposter Content",
-                        "Manipulated Content",
-                        "Misleading Content"
-                    ]
-
-                    probability_df = pd.DataFrame(
-                        {
-                            "Category":
-                                fallback_labels,
-
-                            "Probability": [
-                                float(value) * 100
-                                for value
-                                in result[
-                                    "probabilities"
-                                ]
-                            ]
-                        }
-                    )
-
-                probability_df = (
-                    probability_df
-                    .sort_values(
-                        "Probability",
-                        ascending=False
-                    )
-                    .reset_index(
-                        drop=True
-                    )
-                )
-
-                st.bar_chart(
-                    probability_df.set_index(
-                        "Category"
-                    )
-                )
-
-                display_df = (
-                    probability_df.copy()
-                )
-
-                display_df[
-                    "Probability"
-                ] = display_df[
-                    "Probability"
-                ].map(
-                    lambda x: f"{x:.2f}%"
-                )
-
-                st.dataframe(
-                    display_df,
-                    use_container_width=True,
-                    hide_index=True
-                )
-
-                top_category = (
-                    probability_df.iloc[0]
-                )
-
-                second_category = (
-                    probability_df.iloc[1]
-                )
-
-                st.info(
-                    f"Highest probability: "
-                    f"**{top_category['Category']}** "
-                    f"({top_category['Probability']:.2f}%). "
-                    f"The second-highest category is "
-                    f"**{second_category['Category']}** "
-                    f"({second_category['Probability']:.2f}%)."
-                )
-
-
-            # =================================================
-            # Sentiment tab
-            # =================================================
-
-            with tab2:
-
-                sentiment = result[
-                    "sentiment"
-                ]
-
-                sent1, sent2 = st.columns(
-                    2
-                )
-
-                with sent1:
 
                     st.metric(
-                        "Overall Sentiment",
-                        sentiment["label"]
+                        "Prediction",
+                        result["predicted_label"]
                     )
 
-                with sent2:
-
                     st.metric(
-                        "Compound Score",
+                        "Confidence",
                         (
-                            f"{sentiment['compound']:.4f}"
+                            f"{result['confidence'] * 100:.2f}%"
                         )
                     )
 
+            # --------------------------------------------
+            # Agreement summary
+            # --------------------------------------------
+
+            predictions = [
+                results[name]["predicted_label"]
+                for name in model_order
+            ]
+
+            unique_predictions = set(
+                predictions
+            )
+
+            if len(unique_predictions) == 1:
+
+                st.success(
+                    "All three models produced the same "
+                    f"classification: **{predictions[0]}**."
+                )
+
+            else:
+
+                st.info(
+                    "The models produced different predictions. "
+                    "The detailed tabs below show each model's "
+                    "probability distribution."
+                )
+
+            # --------------------------------------------
+            # Chunk information
+            # --------------------------------------------
+
+            bert_chunks = results[
+                "BERT"
+            ].get(
+                "number_of_chunks",
+                1
+            )
+
+            distil_chunks = results[
+                "DistilBERT"
+            ].get(
+                "number_of_chunks",
+                1
+            )
+
+            max_chunks = max(
+                bert_chunks,
+                distil_chunks
+            )
+
+            if max_chunks > 1:
+
                 st.markdown(
-                    "### Sentiment Distribution"
+                    f"""
+                    <div class="chunk-box">
+                        <strong>
+                            Long-text processing active
+                        </strong><br>
+                        This input required multiple Transformer
+                        chunks. BERT analyzed
+                        <strong>{bert_chunks}</strong> chunks and
+                        DistilBERT analyzed
+                        <strong>{distil_chunks}</strong> chunks.
+                        Chunk-level class probabilities were
+                        averaged to produce each model's final
+                        document-level prediction.
+                    </div>
+                    """,
+                    unsafe_allow_html=True
                 )
 
-                sentiment_df = pd.DataFrame(
-                    {
-                        "Sentiment": [
-                            "Negative",
-                            "Neutral",
-                            "Positive"
-                        ],
+            else:
 
-                        "Score": [
-                            sentiment[
-                                "negative"
-                            ] * 100,
-
-                            sentiment[
-                                "neutral"
-                            ] * 100,
-
-                            sentiment[
-                                "positive"
-                            ] * 100
-                        ]
-                    }
+                st.caption(
+                    "The input fits within one Transformer "
+                    "chunk; long-text splitting was not required."
                 )
 
-                st.bar_chart(
-                    sentiment_df.set_index(
-                        "Sentiment"
-                    )
+            sentiment_result = predict_sentiment(text)
+
+            st.markdown(
+                "## Sentiment Analysis (VADER)",
+                unsafe_allow_html=False
+            )
+            st.caption(
+                "VADER analyzes the emotional tone of the input independently from the classification models."
+            )
+
+            sentiment_cols = st.columns(5)
+            with sentiment_cols[0]:
+                st.metric("Overall Sentiment", sentiment_result["sentiment_label"])
+            with sentiment_cols[1]:
+                st.metric("Compound Score", f"{sentiment_result['compound']:.3f}")
+            with sentiment_cols[2]:
+                st.metric("Positive", f"{sentiment_result['positive']:.3f}")
+            with sentiment_cols[3]:
+                st.metric("Neutral", f"{sentiment_result['neutral']:.3f}")
+            with sentiment_cols[4]:
+                st.metric("Negative", f"{sentiment_result['negative']:.3f}")
+
+            # --------------------------------------------
+            # Model tabs
+            # --------------------------------------------
+
+            bert_tab, distil_tab, logistic_tab, tech_tab = (
+                st.tabs(
+                    [
+                        "🧠 BERT",
+                        "⚡ DistilBERT",
+                        "📊 Logistic Regression",
+                        "🔬 Technical Details"
+                    ]
+                )
+            )
+
+            with bert_tab:
+
+                show_model_result(
+                    "BERT",
+                    results["BERT"]
                 )
 
-                sentiment_display = (
-                    sentiment_df.copy()
+            with distil_tab:
+
+                show_model_result(
+                    "DistilBERT",
+                    results["DistilBERT"]
                 )
 
-                sentiment_display[
-                    "Score"
-                ] = sentiment_display[
-                    "Score"
-                ].map(
-                    lambda x:
-                    f"{x:.2f}%"
+            with logistic_tab:
+
+                show_model_result(
+                    "Logistic Regression",
+                    results[
+                        "Logistic Regression"
+                    ]
                 )
 
-                st.dataframe(
-                    sentiment_display,
-                    use_container_width=True,
-                    hide_index=True
+            with tech_tab:
+
+                st.markdown(
+                    "### Classification Pipeline"
                 )
 
-
-            # =================================================
-            # Technical details tab
-            # =================================================
-
-            with tab3:
-
-                detail1, detail2 = st.columns(
-                    2
+                st.write(
+                    "**BERT:** Fine-tuned Transformer "
+                    "classifier."
                 )
 
-                with detail1:
+                st.write(
+                    "**DistilBERT:** Fine-tuned lightweight "
+                    "Transformer classifier."
+                )
 
-                    st.markdown(
-                        "### NLP Classifier"
-                    )
+                st.write(
+                    "**Logistic Regression:** TF-IDF "
+                    "baseline classifier."
+                )
 
-                    st.write(
-                        "**Model:** DistilBERT"
-                    )
+                st.write(
+                    "**Number of classes:** 6"
+                )
 
-                    st.write(
-                        "**Task:** "
-                        "6-class text classification"
-                    )
+                st.write(
+                    "**Transformer chunk size:** "
+                    "128 tokens"
+                )
 
-                    st.write(
-                        "**Maximum token length:** 128"
-                    )
-
-                    st.write(
-                        "**Output:** "
-                        "Softmax class probabilities"
-                    )
-
-                with detail2:
-
-                    st.markdown(
-                        "### Sentiment Module"
-                    )
-
-                    st.write(
-                        "**Model:** VADER"
-                    )
-
-                    st.write(
-                        "**Output:** "
-                        "Positive / Neutral / Negative"
-                    )
-
-                    st.write(
-                        "**Compound score range:** "
-                        "-1 to +1"
-                    )
+                st.write(
+                    "**Long-text aggregation:** "
+                    "Mean of chunk-level class "
+                    "probabilities"
+                )
 
                 st.markdown(
                     "### Current Input"
@@ -764,10 +820,10 @@ if analyze_button:
                 )
 
                 st.caption(
-                    "The prediction represents the output "
-                    "of the trained research model and should "
-                    "not be treated as independent verification "
-                    "of factual truth."
+                    "Model confidence represents the "
+                    "classifier's probability output. "
+                    "It should not be interpreted as "
+                    "independent factual verification."
                 )
 
         except Exception as error:
@@ -780,13 +836,11 @@ if analyze_button:
                 "Show technical error"
             ):
 
-                st.exception(
-                    error
-                )
+                st.exception(error)
 
 
 # ============================================================
-# Project performance section
+# Research model comparison
 # ============================================================
 
 comparison_file = (
@@ -797,8 +851,15 @@ comparison_file = (
 if comparison_file.exists():
 
     st.markdown(
-        '<div class="section-title">Project Model Comparison</div>',
+        '<div class="section-title">'
+        'Experimental Model Comparison'
+        '</div>',
         unsafe_allow_html=True
+    )
+
+    st.caption(
+        "Evaluation results from the controlled "
+        "project experiments."
     )
 
     try:
@@ -806,6 +867,30 @@ if comparison_file.exists():
         comparison = pd.read_csv(
             comparison_file
         )
+
+        # Identify model-name column.
+        model_column = None
+
+        for candidate in [
+            "Model",
+            "model",
+            "Model Name",
+            "model_name"
+        ]:
+
+            if candidate in comparison.columns:
+                model_column = candidate
+                break
+
+        if model_column is not None:
+
+            comparison = comparison[
+                comparison[
+                    model_column
+                ].astype(str).isin(
+                    ALLOWED_COMPARISON_MODELS
+                )
+            ].copy()
 
         comparison_display = (
             comparison.copy()
@@ -818,9 +903,7 @@ if comparison_file.exists():
             "F1"
         ]:
 
-            if column in (
-                comparison_display.columns
-            ):
+            if column in comparison_display.columns:
 
                 comparison_display[
                     column
@@ -828,7 +911,7 @@ if comparison_file.exists():
                     column
                 ].map(
                     lambda value:
-                    f"{value:.4f}"
+                    f"{float(value):.4f}"
                 )
 
         st.dataframe(
@@ -837,8 +920,62 @@ if comparison_file.exists():
             hide_index=True
         )
 
-    except Exception:
-        pass
+        if (
+            model_column is not None
+            and "Accuracy" in comparison.columns
+            and not comparison.empty
+        ):
+
+            accuracy_chart = comparison[
+                [
+                    model_column,
+                    "Accuracy"
+                ]
+            ].copy()
+
+            accuracy_chart[
+                "Accuracy"
+            ] = (
+                pd.to_numeric(
+                    accuracy_chart["Accuracy"],
+                    errors="coerce"
+                ) * 100
+            )
+
+            accuracy_chart = (
+                accuracy_chart.dropna()
+            )
+
+            if not accuracy_chart.empty:
+
+                st.markdown(
+                    "#### Accuracy Comparison"
+                )
+
+                st.bar_chart(
+                    accuracy_chart.set_index(
+                        model_column
+                    )
+                )
+
+        st.caption(
+            "The comparison is based on the project's "
+            "stored evaluation results. Live confidence "
+            "scores above are input-specific and are not "
+            "the same as test-set accuracy."
+        )
+
+    except Exception as error:
+
+        st.warning(
+            "Stored comparison results could not "
+            "be displayed."
+        )
+
+        with st.expander(
+            "Show comparison error"
+        ):
+            st.exception(error)
 
 
 # ============================================================

@@ -3,7 +3,7 @@ transformers
 pandas
 numpy
 scikit-learn
+datasets
 matplotlib
 streamlit
 vaderSentiment
-joblib

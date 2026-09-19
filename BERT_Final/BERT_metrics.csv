@@ -1,0 +1,2 @@
+Model,Accuracy,Precision,Recall,F1,Training_Time_Seconds,Prediction_Time_Seconds,Training_Samples,Validation_Samples,Test_Samples
+BERT,0.741,0.7317252385200836,0.741,0.7328689458516412,643.252522945404,40.01915001869202,12000,3000,5000

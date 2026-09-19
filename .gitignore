@@ -12,6 +12,7 @@ data/*.zip
 
 # Trained models
 models/
+BERT_Final/BERT_model.zip
 
 # Jupyter
 .ipynb_checkpoints/
