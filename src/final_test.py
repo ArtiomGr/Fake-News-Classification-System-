@@ -1,226 +1,39 @@
-import pandas as pd
-from pathlib import Path
+"""Run the 12 fixed qualitative probes through the completed final system.
 
-from predict import predict_text
-
-
-RESULTS_DIR = Path("results")
-RESULTS_DIR.mkdir(exist_ok=True)
-
-TEST_CASES = [
-    {
-        "id": 1,
-        "text": (
-            "Scientists announced a new medical breakthrough "
-            "after a five-year international study involving "
-            "hospitals across Europe."
-        ),
-        "description": "Normal factual-style news text"
-    },
-    {
-        "id": 2,
-        "text": (
-            "BREAKING: The government is secretly controlling "
-            "the weather using hidden satellites!"
-        ),
-        "description": "Sensational misleading-style text"
-    },
-    {
-        "id": 3,
-        "text": (
-            "Local man becomes billionaire after discovering "
-            "that sleeping 14 hours a day increases productivity."
-        ),
-        "description": "Satirical-style text"
-    },
-    {
-        "id": 4,
-        "text": (
-            "This sponsored article presents the newest smartphone "
-            "as the greatest technological innovation of the year."
-        ),
-        "description": "Promotional-style text"
-    },
-    {
-        "id": 5,
-        "text": (
-            "The city council approved the new transportation plan "
-            "after a public meeting on Monday."
-        ),
-        "description": "Neutral news-style text"
-    },
-    {
-        "id": 6,
-        "text": (
-            "Officials manipulated the image before publishing it "
-            "to make the crowd appear significantly larger."
-        ),
-        "description": "Manipulation-related text"
-    }
-]
+These probes are not training data or an independent performance benchmark.
+"""
+import csv
+import json
+from final_project import ROOT
+from evaluate_native_ads_correction import PROBES
+from predict import predict_text, predict_sentiment
 
 
-print("=" * 75)
-print("FINAL SYSTEM TEST")
-print("=" * 75)
-
-rows = []
-
-for case in TEST_CASES:
-
-    print(f"\nTest Case {case['id']}")
-    print("-" * 50)
-
-    print("Description:")
-    print(case["description"])
-
-    print("\nInput:")
-    print(case["text"])
-
-    try:
-
-        result = predict_text(
-            case["text"]
-        )
-
-        predicted_label = result[
-            "predicted_label"
-        ]
-
-        confidence = (
-            result["confidence"] * 100
-        )
-
-        sentiment = result[
-            "sentiment"
-        ]["label"]
-
-        compound = result[
-            "sentiment"
-        ]["compound"]
-
-        print("\nPrediction:")
-        print(predicted_label)
-
-        print(
-            "Confidence:",
-            f"{confidence:.2f}%"
-        )
-
-        print(
-            "Sentiment:",
-            sentiment
-        )
-
-        print(
-            "Compound score:",
-            f"{compound:.4f}"
-        )
-
-        rows.append(
-            {
-                "Test_ID": case["id"],
-                "Description": (
-                    case["description"]
-                ),
-                "Input_Text": (
-                    case["text"]
-                ),
-                "Predicted_Label": (
-                    predicted_label
-                ),
-                "Confidence_Percent": (
-                    round(
-                        confidence,
-                        2
-                    )
-                ),
-                "Sentiment": (
-                    sentiment
-                ),
-                "Sentiment_Compound": (
-                    compound
-                ),
-                "Status": "PASS"
-            }
-        )
-
-    except Exception as error:
-
-        print(
-            "\nERROR:",
-            error
-        )
-
-        rows.append(
-            {
-                "Test_ID": case["id"],
-                "Description": (
-                    case["description"]
-                ),
-                "Input_Text": (
-                    case["text"]
-                ),
-                "Predicted_Label": "",
-                "Confidence_Percent": "",
-                "Sentiment": "",
-                "Sentiment_Compound": "",
-                "Status": "FAIL"
-            }
-        )
+def main():
+    output = ROOT / "results/final_model_comparison"
+    output.mkdir(parents=True, exist_ok=True)
+    detailed, tabular = [], []
+    for number, (intended, text) in enumerate(PROBES, 1):
+        results = predict_text(text)
+        sentiment = predict_sentiment(text)
+        detailed.append({"number": number, "text": text, "intended_category": intended,
+                         "classification": results, "sentiment": sentiment})
+        for name, result in results.items():
+            row = {"number": number, "model": name, "intended_category": intended,
+                   "predicted_project_label": result["predicted_project_label"],
+                   "predicted_category": result["predicted_label"], "confidence": result["confidence"],
+                   "matches_intended_category": result["predicted_label"] == intended}
+            tabular.append(row)
+            print(json.dumps(row), flush=True)
+    (output / "representative_predictions.json").write_text(json.dumps(detailed, indent=2) + "\n", encoding="utf-8")
+    with (output / "representative_predictions.csv").open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(tabular[0]))
+        writer.writeheader()
+        writer.writerows(tabular)
+    for name in results:
+        correct = sum(row["matches_intended_category"] for row in tabular if row["model"] == name)
+        print(f"{name}: {correct}/12 matches to intended categories", flush=True)
 
 
-results_df = pd.DataFrame(
-    rows
-)
-
-output_file = (
-    RESULTS_DIR /
-    "final_system_test.csv"
-)
-
-results_df.to_csv(
-    output_file,
-    index=False
-)
-
-print("\n" + "=" * 75)
-print("FINAL TEST SUMMARY")
-print("=" * 75)
-
-print(
-    results_df[
-        [
-            "Test_ID",
-            "Predicted_Label",
-            "Confidence_Percent",
-            "Sentiment",
-            "Status"
-        ]
-    ].to_string(
-        index=False
-    )
-)
-
-passed = (
-    results_df[
-        "Status"
-    ] == "PASS"
-).sum()
-
-total = len(
-    results_df
-)
-
-print(
-    f"\nPassed: {passed}/{total}"
-)
-
-print(
-    "\nSaved:",
-    output_file
-)
-
-print("\n" + "=" * 75)
-print("FINAL SYSTEM TEST COMPLETED")
-print("=" * 75)
+if __name__ == "__main__":
+    main()

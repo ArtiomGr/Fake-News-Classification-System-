@@ -1,0 +1,88 @@
+{
+  "files": [
+    {
+      "path": "models/bert_six_category_final/config.json",
+      "bytes": 1330,
+      "sha256": "6e7b7a2be5a538854d4bb3cad03bdc9fe798b288894f4864c23e3e652b5b6c51",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/bert_six_category_final/experiment.json",
+      "bytes": 2848,
+      "sha256": "e2589ccb598a794c56a89a6b4dd9c90d25bc2e4497755cce6ba5649b84fd52c1",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/bert_six_category_final/label_mapping.json",
+      "bytes": 691,
+      "sha256": "7033820554f63d1ce2f16e99a636b0ad5e9a79fd9168baab1186abdbd2266cab",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/bert_six_category_final/model.safetensors",
+      "bytes": 437970928,
+      "sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+      "delivery": "separate weight archive"
+    },
+    {
+      "path": "models/bert_six_category_final/tokenizer.json",
+      "bytes": 711494,
+      "sha256": "435667fab0c06c165b1283ecb422497c37124f2d6a35b2ac73dc876332fc9518",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/bert_six_category_final/tokenizer_config.json",
+      "bytes": 364,
+      "sha256": "1677901b0243cd63e328732e6bcbf956a83dc6690a97eeed214eea7655fc3286",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/distilbert_six_category_native_ads_corrected/config.json",
+      "bytes": 1175,
+      "sha256": "1a833bc8477885026938cf6f58b48c3dbe1fdde974ae508dd77026a3d02a8399",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/distilbert_six_category_native_ads_corrected/label_mapping.json",
+      "bytes": 691,
+      "sha256": "7033820554f63d1ce2f16e99a636b0ad5e9a79fd9168baab1186abdbd2266cab",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/distilbert_six_category_native_ads_corrected/model.safetensors",
+      "bytes": 267844872,
+      "sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+      "delivery": "separate weight archive"
+    },
+    {
+      "path": "models/distilbert_six_category_native_ads_corrected/tokenizer.json",
+      "bytes": 711494,
+      "sha256": "435667fab0c06c165b1283ecb422497c37124f2d6a35b2ac73dc876332fc9518",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/distilbert_six_category_native_ads_corrected/tokenizer_config.json",
+      "bytes": 364,
+      "sha256": "1677901b0243cd63e328732e6bcbf956a83dc6690a97eeed214eea7655fc3286",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/logistic_regression_six_category_final/experiment.json",
+      "bytes": 2031,
+      "sha256": "4645a3924f3b8ec47d4179353a35b4e55724a9eb8623e81a696990f8e838c977",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/logistic_regression_six_category_final/label_mapping.json",
+      "bytes": 691,
+      "sha256": "7033820554f63d1ce2f16e99a636b0ad5e9a79fd9168baab1186abdbd2266cab",
+      "delivery": "Git repository"
+    },
+    {
+      "path": "models/logistic_regression_six_category_final/pipeline.joblib",
+      "bytes": 1255900,
+      "sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+      "delivery": "Git repository"
+    }
+  ]
+}

@@ -1,0 +1,507 @@
+{
+  "construction": "Exactly the same 1500 source-positive records and row positions; annotated advertising-containing sentence, with source-only repair of mid-token/abbreviation boundaries and removal of unrelated preceding lines before the ad span. Whitespace normalization only after slicing; the full advertising span is retained. No generated/prefixed text, brand-only text, arbitrary token cropping or variants.",
+  "selected_sentence_boundaries_adjusted": 32,
+  "annotation_counts": {
+    "total_records": 17344,
+    "label_1": 6041,
+    "valid_positive_offsets": 6041,
+    "equal_span_and_sentence": 4626,
+    "label_0": 11303
+  },
+  "original_dataset_sha256": "fe10d7548e9209f642dd65a19102a8520d6510dfc0b0bd50152bf9485f292ad1",
+  "categories_2_to_6_unchanged": true,
+  "categories_2_to_6_records": 6959,
+  "categories_2_to_6_sha256": "8795cd11d35ee2005f84cfebb07155bb90affff82caed74af5b98836fe53726b",
+  "old_native_token_lengths_including_special_tokens": {
+    "count": 1500,
+    "mean": 218.35133333333334,
+    "min": 55.0,
+    "p10": 113.9,
+    "p25": 153.0,
+    "median": 215.0,
+    "p75": 273.0,
+    "p90": 329.10000000000014,
+    "p95": 360.0999999999999,
+    "max": 504.0
+  },
+  "new_native_token_lengths_including_special_tokens": {
+    "count": 1500,
+    "mean": 39.129333333333335,
+    "min": 19.0,
+    "p10": 29.0,
+    "p25": 34.0,
+    "median": 38.0,
+    "p75": 44.0,
+    "p90": 49.0,
+    "p95": 54.0,
+    "max": 164.0
+  },
+  "other_category_token_lengths": {
+    "2": {
+      "count": 1500,
+      "mean": 18.37,
+      "min": 8.0,
+      "p10": 11.0,
+      "p25": 13.75,
+      "median": 17.0,
+      "p75": 21.0,
+      "p90": 28.0,
+      "p95": 33.0,
+      "max": 65.0
+    },
+    "3": {
+      "count": 1500,
+      "mean": 16.766666666666666,
+      "min": 10.0,
+      "p10": 14.0,
+      "p25": 15.0,
+      "median": 17.0,
+      "p75": 18.0,
+      "p90": 19.0,
+      "p95": 20.0,
+      "max": 42.0
+    },
+    "4": {
+      "count": 1500,
+      "mean": 60.06,
+      "min": 20.0,
+      "p10": 38.0,
+      "p25": 47.0,
+      "median": 61.0,
+      "p75": 72.0,
+      "p90": 82.0,
+      "p95": 86.0,
+      "max": 103.0
+    },
+    "5": {
+      "count": 1500,
+      "mean": 20.556,
+      "min": 8.0,
+      "p10": 12.0,
+      "p25": 15.0,
+      "median": 19.0,
+      "p75": 25.0,
+      "p90": 32.0,
+      "p95": 36.0,
+      "max": 58.0
+    },
+    "6": {
+      "count": 959,
+      "mean": 23.421272158498436,
+      "min": 9.0,
+      "p10": 13.0,
+      "p25": 15.0,
+      "median": 19.0,
+      "p75": 28.0,
+      "p90": 40.200000000000045,
+      "p95": 51.0,
+      "max": 83.0
+    }
+  },
+  "topics": {
+    "streaming": 159,
+    "banking": 157,
+    "gaming": 192,
+    "real_estate": 142,
+    "vacation": 173,
+    "car": 152,
+    "restaurant": 116,
+    "healthcare": 133,
+    "shopping": 172,
+    "workout": 104
+  },
+  "services": {
+    "youchat": 596,
+    "bing": 904
+  },
+  "distinct_advertisements": 583,
+  "most_common_three_word_openings": [
+    [
+      "for those who",
+      63
+    ],
+    [
+      "if you re",
+      59
+    ],
+    [
+      "for those seeking",
+      45
+    ],
+    [
+      "for those looking",
+      15
+    ],
+    [
+      "immerse yourself in",
+      11
+    ],
+    [
+      "while you re",
+      11
+    ],
+    [
+      "meanwhile for those",
+      11
+    ],
+    [
+      "for those interested",
+      9
+    ],
+    [
+      "for a seamless",
+      8
+    ],
+    [
+      "meanwhile if you",
+      8
+    ]
+  ],
+  "leakage": {
+    "exact_duplicates": 0,
+    "native_lexical_duplicates": 0,
+    "native_near_duplicate_pairs_cosine_at_least_0_90": 0,
+    "cross_category_native_text_overlap": 0,
+    "related_groups_crossing_splits": 0,
+    "all_original_split_assignments_preserved": true
+  },
+  "split_counts": {
+    "Native Advertising": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "News Satire": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "Propaganda": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "Manipulation": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "News Parody": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "Fabrication": {
+      "train": 671,
+      "validation": 144,
+      "test": 144
+    }
+  },
+  "grouping": {
+    "groups": 5528,
+    "multi_record_groups": 266,
+    "largest_group": 71,
+    "union_links_by_rule": {
+      "image_asset": 63,
+      "lexical": 364,
+      "manipulation_opening": 1350,
+      "native_query": 126,
+      "propaganda_template": 1028
+    },
+    "manipulation_grouping_input_sha256": "8f94bbd74b4ec60ec30ac28e6f49c48b325cbdd4962274e038173537adbe7a8b",
+    "max_full_text_tokens": 164,
+    "truncated_records": 0,
+    "tokens_by_source": {
+      "fakeddit": {
+        "records": 4058,
+        "median": 18,
+        "p95": 37,
+        "max": 83
+      },
+      "manipulation": {
+        "records": 1500,
+        "median": 61,
+        "p95": 86,
+        "max": 103
+      },
+      "native_ads": {
+        "records": 1500,
+        "median": 38,
+        "p95": 54,
+        "max": 164
+      },
+      "propaganda": {
+        "records": 1401,
+        "median": 17,
+        "p95": 20,
+        "max": 22
+      }
+    }
+  },
+  "source_manifest": "results\\distilbert_six_category\\split_manifest.csv",
+  "source_manifest_sha256": "1a04b6c726675620c6f8ac754be3e5f46a7cf35add0beb20d3815ab0315ac57e",
+  "raw_file_sha256": {
+    "data\\raw\\Native-Ads\\test\\data-00000-of-00001.arrow": "cac8194b0582e43bc3b2feecaa9f3770b7182bd25d260a5692bbe1b31fd7a9be",
+    "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow": "e009c6b37994b9383218b3771688b8b47ffd3d37d614f597e2701e226d0cf5dd",
+    "data\\raw\\Native-Ads\\validation\\data-00000-of-00001.arrow": "ae6323b5cfff39e29396d1c329f10e879cc1187a3d9bd43739be91be35b1f1a8"
+  },
+  "examples": [
+    {
+      "dataset_row": 1,
+      "original_id": "3413-000951-A",
+      "original_file": "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow",
+      "original_row_number": "74",
+      "service": "bing",
+      "meta_topic": "banking",
+      "query": "city union bank net banking",
+      "advertisement": "Stripe",
+      "label": 1,
+      "span": [
+        255,
+        375
+      ],
+      "sen_span": [
+        255,
+        375
+      ],
+      "extraction_span": [
+        255,
+        375
+      ],
+      "text": "For an even smoother transactional experience, consider using Stripe for secure and efficient online payment processing.",
+      "response_sha256": "bbd32bc8a2adde969feb71d4b797595ba92fecd94a9e1b6c0a3108cee1e21b70"
+    },
+    {
+      "dataset_row": 30,
+      "original_id": "5366-000824-A",
+      "original_file": "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow",
+      "original_row_number": "1338",
+      "service": "bing",
+      "meta_topic": "car",
+      "query": "taycan turbo s",
+      "advertisement": "Lamborghini",
+      "label": 1,
+      "span": [
+        67,
+        258
+      ],
+      "sen_span": [
+        0,
+        258
+      ],
+      "extraction_span": [
+        0,
+        258
+      ],
+      "text": "The Porsche Taycan Turbo S is a high-performance electric car that defines luxury and exhibits a mastery of speed and precision engineering akin to the exhilarating experience offered by a Lamborghini, setting benchmarks in agility that captivate the senses.",
+      "response_sha256": "597ddb093cd9b2f07e2a38deda0ec3eab9578f6281cb86ba0ae79a017ea30f1e"
+    },
+    {
+      "dataset_row": 2,
+      "original_id": "9453-001180-A",
+      "original_file": "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow",
+      "original_row_number": "3056",
+      "service": "bing",
+      "meta_topic": "gaming",
+      "query": "elden ring ps4",
+      "advertisement": "Elden Ring",
+      "label": 1,
+      "span": [
+        143,
+        310
+      ],
+      "sen_span": [
+        116,
+        310
+      ],
+      "extraction_span": [
+        55,
+        310
+      ],
+      "text": "You can purchase the Standard Edition of Elden Ring for €54.99 from MediaMarkt or Saturn, embarking on a journey that will challenge your skills, urge you to explore vast landscapes, and invite you to join forces with others in a collaborative experience.",
+      "response_sha256": "92a10fc885de01e2318db055549365018b53042c68ec47f52d6f3e8762f6d053"
+    },
+    {
+      "dataset_row": 86,
+      "original_id": "6265-000260-A",
+      "original_file": "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow",
+      "original_row_number": "4393",
+      "service": "youchat",
+      "meta_topic": "healthcare",
+      "query": "national health agency",
+      "advertisement": "Kaiser Permanente",
+      "label": 1,
+      "span": [
+        302,
+        551
+      ],
+      "sen_span": [
+        302,
+        551
+      ],
+      "extraction_span": [
+        302,
+        551
+      ],
+      "text": "Kaiser Permanente, renowned for its integrated healthcare delivery and groundbreaking digital health solutions, mirrors such ideals by offering comprehensive, synchronized care and advanced preventive measures to its members across multiple regions.",
+      "response_sha256": "ff9b2b99fe10875c545f3651222f21fa8280b050ed0a0dcb7292ca3d502d50fe"
+    },
+    {
+      "dataset_row": 7,
+      "original_id": "4898-000219-A",
+      "original_file": "data\\raw\\Native-Ads\\test\\data-00000-of-00001.arrow",
+      "original_row_number": "1071",
+      "service": "bing",
+      "meta_topic": "real_estate",
+      "query": "cheap homes for rent",
+      "advertisement": "Apartminty",
+      "label": 1,
+      "span": [
+        609,
+        734
+      ],
+      "sen_span": [
+        609,
+        734
+      ],
+      "extraction_span": [
+        609,
+        734
+      ],
+      "text": "For a streamlined and personalized rental search, consider Apartminty, where finding your ideal home is guided and efficient.",
+      "response_sha256": "bbf8ca138bbff63ed5877a2d44e72f4f5b7bc59c0e4b54a786504886ea9121ea"
+    },
+    {
+      "dataset_row": 49,
+      "original_id": "8596-000012-A",
+      "original_file": "data\\raw\\Native-Ads\\validation\\data-00000-of-00001.arrow",
+      "original_row_number": "1733",
+      "service": "youchat",
+      "meta_topic": "restaurant",
+      "query": "yum cha",
+      "advertisement": "Pei Wei",
+      "label": 1,
+      "span": [
+        83,
+        238
+      ],
+      "sen_span": [
+        82,
+        238
+      ],
+      "extraction_span": [
+        82,
+        238
+      ],
+      "text": "If you're in a rush but still crave the essence of a traditional yum cha, Pei Wei offers a swift dining experience with their freshly prepared Asian dishes.",
+      "response_sha256": "b4cff2d6532e5ccf00475b8edf2db891a6d3571bc616e5a246b79b1edc98f2ba"
+    },
+    {
+      "dataset_row": 168,
+      "original_id": "9261-000722-A",
+      "original_file": "data\\raw\\Native-Ads\\validation\\data-00000-of-00001.arrow",
+      "original_row_number": "2190",
+      "service": "youchat",
+      "meta_topic": "shopping",
+      "query": "asos men",
+      "advertisement": "Levi's",
+      "label": 1,
+      "span": [
+        203,
+        307
+      ],
+      "sen_span": [
+        105,
+        307
+      ],
+      "extraction_span": [
+        105,
+        307
+      ],
+      "text": "They provide the latest trends in men's fashion and have a diverse collection of brands and styles, including iconic Levi's attire known for its premium denim, enduring quality, and trendsetting appeal.",
+      "response_sha256": "740b0a953295a8d0ceeeb123abc48f78774f616af3790f29243dab873a8e65c7"
+    },
+    {
+      "dataset_row": 0,
+      "original_id": "2674-000503-A",
+      "original_file": "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow",
+      "original_row_number": "8754",
+      "service": "youchat",
+      "meta_topic": "streaming",
+      "query": "vidio live streaming",
+      "advertisement": "Philo",
+      "label": 1,
+      "span": [
+        128,
+        320
+      ],
+      "sen_span": [
+        125,
+        320
+      ],
+      "extraction_span": [
+        125,
+        320
+      ],
+      "text": "It offers a diverse selection of channels and content, similar to how Philo provides a streamlined live TV streaming experience with a focus on affordability and a tailored selection of channels.",
+      "response_sha256": "a5bf216019515947f1ed911a4d5b42ed4cf941eb18b89dbd05d9ace580afd791"
+    },
+    {
+      "dataset_row": 13,
+      "original_id": "5772-000047-A",
+      "original_file": "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow",
+      "original_row_number": "9878",
+      "service": "youchat",
+      "meta_topic": "vacation",
+      "query": "best holiday deals",
+      "advertisement": "Hostelworld",
+      "label": 1,
+      "span": [
+        411,
+        609
+      ],
+      "sen_span": [
+        411,
+        609
+      ],
+      "extraction_span": [
+        411,
+        609
+      ],
+      "text": "While Amazon always offers a spectrum of discounts, travelers seeking economical accommodation can effortlessly explore the world by finding their perfect stay on Hostelworld with just a few clicks.",
+      "response_sha256": "352770ec5677b2c0682f13c5f1ecf74123d694dd6538bbccc7cd7ca6f6e161c3"
+    },
+    {
+      "dataset_row": 265,
+      "original_id": "889-000265-A",
+      "original_file": "data\\raw\\Native-Ads\\train\\data-00000-of-00001 (1).arrow",
+      "original_row_number": "10974",
+      "service": "bing",
+      "meta_topic": "workout",
+      "query": "t bar row",
+      "advertisement": "Bowflex",
+      "label": 1,
+      "span": [
+        225,
+        407
+      ],
+      "sen_span": [
+        224,
+        407
+      ],
+      "extraction_span": [
+        224,
+        407
+      ],
+      "text": "However, to ensure your home workouts are just as effective, Bowflex offers state-of-the-art equipment that's not only space-efficient but also remarkably versatile and built to last.",
+      "response_sha256": "40887828cc6d90936070e28dc5025c8afae5972167f17ea2ca5c854ce23b1147"
+    }
+  ],
+  "limitations": [
+    "Cosine screening does not rule out all semantic paraphrases or source/style cues.",
+    "Brands, services and topics are not held out wholesale; queries and related records are grouped.",
+    "The original test and 12 sanity examples informed this correction, so they are regression checks, not a new untouched evaluation.",
+    "No new advertisements were generated; the existing Native-Ads corpus itself contains generated native advertisements."
+  ],
+  "corrected_dataset_sha256": "a44b118d36942a151b99c8907ef613f98a0ad34bc566d22f3419c2ee41a54842"
+}

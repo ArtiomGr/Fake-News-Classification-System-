@@ -1,0 +1,890 @@
+[
+  {
+    "number": 1,
+    "text": "Sponsored: Discover our new running shoes and shop the collection today.",
+    "intended_category": "Native Advertising",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 2,
+        "predicted_project_label": 3,
+        "predicted_label": "Propaganda",
+        "confidence": 0.9933748841285706,
+        "probability_by_label": {
+          "Native Advertising": 0.002093653194606304,
+          "News Satire": 0.0004755973059218377,
+          "Propaganda": 0.9933748841285706,
+          "Manipulation": 0.00044296501437202096,
+          "News Parody": 0.0026939399540424347,
+          "Fabrication": 0.0009189523989334702
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.23900830000638962
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 2,
+        "predicted_project_label": 3,
+        "predicted_label": "Propaganda",
+        "confidence": 0.9971178770065308,
+        "probability_by_label": {
+          "Native Advertising": 0.0006415300304070115,
+          "News Satire": 0.0005211664247326553,
+          "Propaganda": 0.9971178770065308,
+          "Manipulation": 0.0004136741627007723,
+          "News Parody": 0.000825209659524262,
+          "Fabrication": 0.00048057682579383254
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.11717770001268946
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 5,
+        "predicted_project_label": 6,
+        "predicted_label": "Fabrication",
+        "confidence": 0.42916428718128957,
+        "probability_by_label": {
+          "Native Advertising": 0.2090881206198583,
+          "News Satire": 0.1043290361064838,
+          "Propaganda": 0.08915585858875504,
+          "Manipulation": 0.017809052833720283,
+          "News Parody": 0.15045364466989303,
+          "Fabrication": 0.42916428718128957
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.074005100002978
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Neutral",
+      "positive": 0.0,
+      "neutral": 1.0,
+      "negative": 0.0,
+      "compound": 0.0
+    }
+  },
+  {
+    "number": 2,
+    "text": "This article is brought to you by TravelPro. Book your next vacation with our exclusive summer deals.",
+    "intended_category": "Native Advertising",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 0,
+        "predicted_project_label": 1,
+        "predicted_label": "Native Advertising",
+        "confidence": 0.9699077606201172,
+        "probability_by_label": {
+          "Native Advertising": 0.9699077606201172,
+          "News Satire": 0.0007376691210083663,
+          "Propaganda": 0.013558421283960342,
+          "Manipulation": 0.002737600589171052,
+          "News Parody": 0.010950915515422821,
+          "Fabrication": 0.002107578329741955
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.17162320000352338
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 0,
+        "predicted_project_label": 1,
+        "predicted_label": "Native Advertising",
+        "confidence": 0.6786684393882751,
+        "probability_by_label": {
+          "Native Advertising": 0.6786684393882751,
+          "News Satire": 0.00916996132582426,
+          "Propaganda": 0.04513326659798622,
+          "Manipulation": 0.00574896764010191,
+          "News Parody": 0.2440718710422516,
+          "Fabrication": 0.017207534983754158
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.08906970001407899
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 0,
+        "predicted_project_label": 1,
+        "predicted_label": "Native Advertising",
+        "confidence": 0.3471986453305188,
+        "probability_by_label": {
+          "Native Advertising": 0.3471986453305188,
+          "News Satire": 0.18613456627306743,
+          "Propaganda": 0.08478431675009598,
+          "Manipulation": 0.09679799184412685,
+          "News Parody": 0.16357882526556658,
+          "Fabrication": 0.12150565453662433
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.004346800007624552
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Positive",
+      "positive": 0.086,
+      "neutral": 0.914,
+      "negative": 0.0,
+      "compound": 0.128
+    }
+  },
+  {
+    "number": 3,
+    "text": "Government announces new department dedicated to explaining why nothing is its responsibility.",
+    "intended_category": "News Satire",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.9956242442131042,
+        "probability_by_label": {
+          "Native Advertising": 0.0002915816439781338,
+          "News Satire": 0.002377810189500451,
+          "Propaganda": 0.00046545403893105686,
+          "Manipulation": 0.0003729721938725561,
+          "News Parody": 0.9956242442131042,
+          "Fabrication": 0.0008679876918904483
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.10292840001056902
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.935798168182373,
+        "probability_by_label": {
+          "Native Advertising": 0.0006257958011701703,
+          "News Satire": 0.058664772659540176,
+          "Propaganda": 0.0026441768277436495,
+          "Manipulation": 0.0008207029895856977,
+          "News Parody": 0.935798168182373,
+          "Fabrication": 0.0014463484985753894
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.05074930001865141
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.5783966965947855,
+        "probability_by_label": {
+          "Native Advertising": 0.0630570903433567,
+          "News Satire": 0.21097365914248406,
+          "Propaganda": 0.018764653979004148,
+          "Manipulation": 0.02654442396654596,
+          "News Parody": 0.5783966965947855,
+          "Fabrication": 0.10226347597382356
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.002871500008041039
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Positive",
+      "positive": 0.214,
+      "neutral": 0.786,
+      "negative": 0.0,
+      "compound": 0.4588
+    }
+  },
+  {
+    "number": 4,
+    "text": "Politicians agree to solve climate change immediately after finishing their next election campaign.",
+    "intended_category": "News Satire",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 1,
+        "predicted_project_label": 2,
+        "predicted_label": "News Satire",
+        "confidence": 0.9970625042915344,
+        "probability_by_label": {
+          "Native Advertising": 0.00029814598383381963,
+          "News Satire": 0.9970625042915344,
+          "Propaganda": 0.0004923107335343957,
+          "Manipulation": 0.00027056841645389795,
+          "News Parody": 0.0009199983906000853,
+          "Fabrication": 0.0009564745123498142
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.17600939999101683
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 1,
+        "predicted_project_label": 2,
+        "predicted_label": "News Satire",
+        "confidence": 0.9964746236801147,
+        "probability_by_label": {
+          "Native Advertising": 0.00035057144123129547,
+          "News Satire": 0.9964746236801147,
+          "Propaganda": 0.000686953600961715,
+          "Manipulation": 0.0006300893146544695,
+          "News Parody": 0.0009010921930894256,
+          "Fabrication": 0.0009566679946146905
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.07762340002227575
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 1,
+        "predicted_project_label": 2,
+        "predicted_label": "News Satire",
+        "confidence": 0.6710694959843314,
+        "probability_by_label": {
+          "Native Advertising": 0.04279373084173125,
+          "News Satire": 0.6710694959843314,
+          "Propaganda": 0.02743654708654138,
+          "Manipulation": 0.016709993590102,
+          "News Parody": 0.1637349370403845,
+          "Fabrication": 0.07825529545690953
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.0029756999865639955
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Positive",
+      "positive": 0.281,
+      "neutral": 0.719,
+      "negative": 0.0,
+      "compound": 0.5106
+    }
+  },
+  {
+    "number": 5,
+    "text": "Only our movement can save the nation from those who seek to destroy our values.",
+    "intended_category": "Propaganda",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 2,
+        "predicted_project_label": 3,
+        "predicted_label": "Propaganda",
+        "confidence": 0.9945833086967468,
+        "probability_by_label": {
+          "Native Advertising": 0.0017953397473320365,
+          "News Satire": 0.0016249013133347034,
+          "Propaganda": 0.9945833086967468,
+          "Manipulation": 0.0009836758254095912,
+          "News Parody": 0.0005918530514463782,
+          "Fabrication": 0.0004209282633382827
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.16188700002385303
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 2,
+        "predicted_project_label": 3,
+        "predicted_label": "Propaganda",
+        "confidence": 0.9851503968238831,
+        "probability_by_label": {
+          "Native Advertising": 0.0021794489584863186,
+          "News Satire": 0.00455745542421937,
+          "Propaganda": 0.9851503968238831,
+          "Manipulation": 0.003454145509749651,
+          "News Parody": 0.0009869459317997098,
+          "Fabrication": 0.0036715364549309015
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.08008340001106262
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.23157432427787575,
+        "probability_by_label": {
+          "Native Advertising": 0.21254947497051588,
+          "News Satire": 0.17323099334729664,
+          "Propaganda": 0.1597506840457566,
+          "Manipulation": 0.03446051996314546,
+          "News Parody": 0.23157432427787575,
+          "Fabrication": 0.18843400339540972
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.0023271999962162226
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Positive",
+      "positive": 0.276,
+      "neutral": 0.561,
+      "negative": 0.164,
+      "compound": 0.34
+    }
+  },
+  {
+    "number": 6,
+    "text": "The enemy wants you weak and divided. Stand together and defend our country.",
+    "intended_category": "Propaganda",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 2,
+        "predicted_project_label": 3,
+        "predicted_label": "Propaganda",
+        "confidence": 0.9957972168922424,
+        "probability_by_label": {
+          "Native Advertising": 0.0006925960187800229,
+          "News Satire": 0.0007708111079409719,
+          "Propaganda": 0.9957972168922424,
+          "Manipulation": 0.0019060909980908036,
+          "News Parody": 0.0003873337700497359,
+          "Fabrication": 0.00044597493251785636
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.16477539998595603
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 2,
+        "predicted_project_label": 3,
+        "predicted_label": "Propaganda",
+        "confidence": 0.9909715056419373,
+        "probability_by_label": {
+          "Native Advertising": 0.001238370663486421,
+          "News Satire": 0.002042846055701375,
+          "Propaganda": 0.9909715056419373,
+          "Manipulation": 0.004050420597195625,
+          "News Parody": 0.0006307458388619125,
+          "Fabrication": 0.0010661076521500945
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.08292250000522472
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 0,
+        "predicted_project_label": 1,
+        "predicted_label": "Native Advertising",
+        "confidence": 0.3395043288554642,
+        "probability_by_label": {
+          "Native Advertising": 0.3395043288554642,
+          "News Satire": 0.09224191657641093,
+          "Propaganda": 0.27295054829823373,
+          "Manipulation": 0.04675968615840583,
+          "News Parody": 0.08268048788943533,
+          "Fabrication": 0.16586303222205
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.0035961999965365976
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Negative",
+      "positive": 0.0,
+      "neutral": 0.632,
+      "negative": 0.368,
+      "compound": -0.7506
+    }
+  },
+  {
+    "number": 7,
+    "text": "After everything I've done for you, you owe me this. If you cared about me, you would agree.",
+    "intended_category": "Manipulation",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 3,
+        "predicted_project_label": 4,
+        "predicted_label": "Manipulation",
+        "confidence": 0.9974451661109924,
+        "probability_by_label": {
+          "Native Advertising": 0.0008025090210139751,
+          "News Satire": 0.000376706913812086,
+          "Propaganda": 0.0005841170786879957,
+          "Manipulation": 0.9974451661109924,
+          "News Parody": 0.0004754853725899011,
+          "Fabrication": 0.00031602781382389367
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.18524000002071261
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 3,
+        "predicted_project_label": 4,
+        "predicted_label": "Manipulation",
+        "confidence": 0.9972456097602844,
+        "probability_by_label": {
+          "Native Advertising": 0.0005424898699857295,
+          "News Satire": 0.00047391297994181514,
+          "Propaganda": 0.0006771694752387702,
+          "Manipulation": 0.9972456097602844,
+          "News Parody": 0.00030150183010846376,
+          "Fabrication": 0.0007593777845613658
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.09187660002498887
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 3,
+        "predicted_project_label": 4,
+        "predicted_label": "Manipulation",
+        "confidence": 0.8598729039568914,
+        "probability_by_label": {
+          "Native Advertising": 0.03159892580620068,
+          "News Satire": 0.04625010077603409,
+          "Propaganda": 0.011173778078924609,
+          "Manipulation": 0.8598729039568914,
+          "News Parody": 0.031357422823174205,
+          "Fabrication": 0.019746868558774965
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.0024744000111240894
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Positive",
+      "positive": 0.249,
+      "neutral": 0.751,
+      "negative": 0.0,
+      "compound": 0.6486
+    }
+  },
+  {
+    "number": 8,
+    "text": "Everyone knows you're too sensitive. That never happened; you're just imagining things again.",
+    "intended_category": "Manipulation",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 3,
+        "predicted_project_label": 4,
+        "predicted_label": "Manipulation",
+        "confidence": 0.9971376657485962,
+        "probability_by_label": {
+          "Native Advertising": 0.0006855112151242793,
+          "News Satire": 0.00028300133999437094,
+          "Propaganda": 0.0006620893836952746,
+          "Manipulation": 0.9971376657485962,
+          "News Parody": 0.0005401193629950285,
+          "Fabrication": 0.0006916128913871944
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.17593769999803044
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 3,
+        "predicted_project_label": 4,
+        "predicted_label": "Manipulation",
+        "confidence": 0.9968242049217224,
+        "probability_by_label": {
+          "Native Advertising": 0.00045814720215275884,
+          "News Satire": 0.0006444760365411639,
+          "Propaganda": 0.0006465259939432144,
+          "Manipulation": 0.9968242049217224,
+          "News Parody": 0.0004081366059836,
+          "Fabrication": 0.0010184966959059238
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.07797469999059103
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 3,
+        "predicted_project_label": 4,
+        "predicted_label": "Manipulation",
+        "confidence": 0.5604044712734793,
+        "probability_by_label": {
+          "Native Advertising": 0.08773224499871576,
+          "News Satire": 0.08236064554534932,
+          "Propaganda": 0.03292481814924391,
+          "Manipulation": 0.5604044712734793,
+          "News Parody": 0.19178171795039947,
+          "Fabrication": 0.04479610208281228
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.002749300008872524
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Neutral",
+      "positive": 0.0,
+      "neutral": 1.0,
+      "negative": 0.0,
+      "compound": 0.0
+    }
+  },
+  {
+    "number": 9,
+    "text": "Study finds employees are 300% more productive after pretending the internet is down.",
+    "intended_category": "News Parody",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.9964292645454407,
+        "probability_by_label": {
+          "Native Advertising": 0.0006198749179020524,
+          "News Satire": 0.0006972266128286719,
+          "Propaganda": 0.00044226081809028983,
+          "Manipulation": 0.0005724546499550343,
+          "News Parody": 0.9964292645454407,
+          "Fabrication": 0.0012389643816277385
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.15959210001165047
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.9956463575363159,
+        "probability_by_label": {
+          "Native Advertising": 0.0004139756492804736,
+          "News Satire": 0.0012982393382117152,
+          "Propaganda": 0.000704531092196703,
+          "Manipulation": 0.00035125412978231907,
+          "News Parody": 0.9956463575363159,
+          "Fabrication": 0.0015856524696573615
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.0825763999891933
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.7909329617730808,
+        "probability_by_label": {
+          "Native Advertising": 0.014803802224808331,
+          "News Satire": 0.027971703852745118,
+          "Propaganda": 0.011372794276785753,
+          "Manipulation": 0.007919564682495266,
+          "News Parody": 0.7909329617730808,
+          "Fabrication": 0.14699917319008476
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.003299400006653741
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Positive",
+      "positive": 0.122,
+      "neutral": 0.878,
+      "negative": 0.0,
+      "compound": 0.1689
+    }
+  },
+  {
+    "number": 10,
+    "text": "Scientists confirm Monday mornings now officially begin on Sunday night.",
+    "intended_category": "News Parody",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.9962406158447266,
+        "probability_by_label": {
+          "Native Advertising": 0.0006170470151118934,
+          "News Satire": 0.0005376403569243848,
+          "Propaganda": 0.0007334899855777621,
+          "Manipulation": 0.0006339750252664089,
+          "News Parody": 0.9962406158447266,
+          "Fabrication": 0.0012372275814414024
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.11246010000468232
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.9957926869392395,
+        "probability_by_label": {
+          "Native Advertising": 0.0005000009550713003,
+          "News Satire": 0.001085046213120222,
+          "Propaganda": 0.001036934438161552,
+          "Manipulation": 0.00037547663669101894,
+          "News Parody": 0.9957926869392395,
+          "Fabrication": 0.001209868467412889
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.04793340002652258
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.8361270027558564,
+        "probability_by_label": {
+          "Native Advertising": 0.023062439529470295,
+          "News Satire": 0.08008066960433761,
+          "Propaganda": 0.01645323871519198,
+          "Manipulation": 0.009620269043978757,
+          "News Parody": 0.8361270027558564,
+          "Fabrication": 0.03465638035116484
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.0032645000028423965
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Neutral",
+      "positive": 0.0,
+      "neutral": 1.0,
+      "negative": 0.0,
+      "compound": 0.0
+    }
+  },
+  {
+    "number": 11,
+    "text": "Researchers at Stanford discovered that humans can survive for six months without sleep.",
+    "intended_category": "Fabrication",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 5,
+        "predicted_project_label": 6,
+        "predicted_label": "Fabrication",
+        "confidence": 0.9938356876373291,
+        "probability_by_label": {
+          "Native Advertising": 0.001450904761441052,
+          "News Satire": 0.0014069847529754043,
+          "Propaganda": 0.0008157817646861076,
+          "Manipulation": 0.00043389128404669464,
+          "News Parody": 0.002056727884337306,
+          "Fabrication": 0.9938356876373291
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.15948719999869354
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 5,
+        "predicted_project_label": 6,
+        "predicted_label": "Fabrication",
+        "confidence": 0.9964472651481628,
+        "probability_by_label": {
+          "Native Advertising": 0.0006841379217803478,
+          "News Satire": 0.0006217291229404509,
+          "Propaganda": 0.0005224386695772409,
+          "Manipulation": 0.0005558091215789318,
+          "News Parody": 0.0011685616336762905,
+          "Fabrication": 0.9964472651481628
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.0826210999803152
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.3632772948449974,
+        "probability_by_label": {
+          "Native Advertising": 0.16325080707977627,
+          "News Satire": 0.12326457711610625,
+          "Propaganda": 0.03053579184497419,
+          "Manipulation": 0.03877673070795042,
+          "News Parody": 0.3632772948449974,
+          "Fabrication": 0.2808947984061954
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.003183499997248873
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Neutral",
+      "positive": 0.0,
+      "neutral": 1.0,
+      "negative": 0.0,
+      "compound": 0.0
+    }
+  },
+  {
+    "number": 12,
+    "text": "NASA announced that a second moon will become visible from Earth next month.",
+    "intended_category": "Fabrication",
+    "classification": {
+      "BERT": {
+        "model_name": "BERT",
+        "predicted_class": 5,
+        "predicted_project_label": 6,
+        "predicted_label": "Fabrication",
+        "confidence": 0.9915329813957214,
+        "probability_by_label": {
+          "Native Advertising": 0.0016038203611969948,
+          "News Satire": 0.0015774609055370092,
+          "Propaganda": 0.0009296445641666651,
+          "Manipulation": 0.00047186782467179,
+          "News Parody": 0.0038842393551021814,
+          "Fabrication": 0.9915329813957214
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final",
+        "weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+        "inference_seconds": 0.15795389999402687
+      },
+      "DistilBERT": {
+        "model_name": "DistilBERT",
+        "predicted_class": 5,
+        "predicted_project_label": 6,
+        "predicted_label": "Fabrication",
+        "confidence": 0.9885799884796143,
+        "probability_by_label": {
+          "Native Advertising": 0.0008626795606687665,
+          "News Satire": 0.0013734184904024005,
+          "Propaganda": 0.0010197492083534598,
+          "Manipulation": 0.0008440105593763292,
+          "News Parody": 0.007320157717913389,
+          "Fabrication": 0.9885799884796143
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "tokenizer_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+        "weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+        "inference_seconds": 0.0821400000131689
+      },
+      "Logistic Regression": {
+        "model_name": "Logistic Regression",
+        "predicted_class": 4,
+        "predicted_project_label": 5,
+        "predicted_label": "News Parody",
+        "confidence": 0.764691330309392,
+        "probability_by_label": {
+          "Native Advertising": 0.02858963814684795,
+          "News Satire": 0.09646090605640972,
+          "Propaganda": 0.01996596144402743,
+          "Manipulation": 0.014051516953961434,
+          "News Parody": 0.764691330309392,
+          "Fabrication": 0.0762406470893616
+        },
+        "number_of_chunks": 1,
+        "model_path": "C:\\Users\\97250\\Desktop\\FinPro\\models\\logistic_regression_six_category_final",
+        "tokenizer_path": null,
+        "weights_sha256": "5b8bc86dd33fbf96bd53bfbae35c94a02859b2c0ca1945175216ff4a9752aae8",
+        "inference_seconds": 0.0030057999829296023
+      }
+    },
+    "sentiment": {
+      "sentiment_label": "Neutral",
+      "positive": 0.0,
+      "neutral": 1.0,
+      "negative": 0.0,
+      "compound": 0.0
+    }
+  }
+]

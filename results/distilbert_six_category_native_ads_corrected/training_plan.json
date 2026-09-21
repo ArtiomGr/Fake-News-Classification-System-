@@ -1,0 +1,148 @@
+{
+  "dataset": "C:\\Users\\97250\\Desktop\\FinPro\\data\\processed\\final_six_category_dataset.csv",
+  "dataset_sha256": "a44b118d36942a151b99c8907ef613f98a0ad34bc566d22f3419c2ee41a54842",
+  "records": 8459,
+  "base_model": "distilbert-base-uncased",
+  "base_revision": "12040accade4e8a0f71eabdb258fecc2e7e948be",
+  "base_snapshot": "C:\\Users\\97250\\.cache\\huggingface\\hub\\models--distilbert-base-uncased\\snapshots\\12040accade4e8a0f71eabdb258fecc2e7e948be",
+  "model_output": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected",
+  "results_output": "C:\\Users\\97250\\Desktop\\FinPro\\results\\distilbert_six_category_native_ads_corrected",
+  "random_state": 42,
+  "hyperparameters": {
+    "max_length": 512,
+    "epochs": 3,
+    "learning_rate": 2e-05,
+    "weight_decay": 0.01,
+    "train_batch_size": 8,
+    "eval_batch_size": 16,
+    "gradient_accumulation_steps": 2,
+    "warmup_fraction": 0.1,
+    "lr_scheduler_type": "linear",
+    "optimizer": "adamw_torch",
+    "best_model_metric": "macro_f1",
+    "seed": 42,
+    "dynamic_padding": true,
+    "full_determinism": true,
+    "fp16": false,
+    "bf16": false,
+    "dataloader_num_workers": 0
+  },
+  "split_counts": {
+    "Native Advertising": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "News Satire": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "Propaganda": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "Manipulation": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "News Parody": {
+      "train": 1050,
+      "validation": 225,
+      "test": 225
+    },
+    "Fabrication": {
+      "train": 671,
+      "validation": 144,
+      "test": 144
+    }
+  },
+  "split_totals": {
+    "train": 5921,
+    "validation": 1269,
+    "test": 1269
+  },
+  "grouping": {
+    "groups": 5528,
+    "multi_record_groups": 266,
+    "largest_group": 71,
+    "union_links_by_rule": {
+      "image_asset": 63,
+      "lexical": 364,
+      "manipulation_opening": 1350,
+      "native_query": 126,
+      "propaganda_template": 1028
+    },
+    "manipulation_grouping_input_sha256": "8f94bbd74b4ec60ec30ac28e6f49c48b325cbdd4962274e038173537adbe7a8b",
+    "max_full_text_tokens": 164,
+    "truncated_records": 0,
+    "tokens_by_source": {
+      "fakeddit": {
+        "records": 4058,
+        "median": 18,
+        "p95": 37,
+        "max": 83
+      },
+      "manipulation": {
+        "records": 1500,
+        "median": 61,
+        "p95": 86,
+        "max": 103
+      },
+      "native_ads": {
+        "records": 1500,
+        "median": 38,
+        "p95": 54,
+        "max": 164
+      },
+      "propaganda": {
+        "records": 1401,
+        "median": 17,
+        "p95": 20,
+        "max": 22
+      }
+    }
+  },
+  "training_only_class_weights": {
+    "Native Advertising": 0.9398412698412698,
+    "News Satire": 0.9398412698412698,
+    "Propaganda": 0.9398412698412698,
+    "Manipulation": 0.9398412698412698,
+    "News Parody": 0.9398412698412698,
+    "Fabrication": 1.4706905116741182
+  },
+  "warmup_steps": 112,
+  "device_available": "cpu",
+  "versions": {
+    "torch": "2.13.0",
+    "transformers": "5.15.0",
+    "datasets": "5.0.1",
+    "accelerate": "1.14.0",
+    "scikit-learn": "1.9.0",
+    "scipy": "1.18.0",
+    "numpy": "2.5.2"
+  },
+  "leakage_checks": {
+    "normalized_text_overlap": 0,
+    "related_group_overlap": 0,
+    "model_inputs": [
+      "input_ids",
+      "attention_mask"
+    ],
+    "model_initialization": "Original pretrained base, fresh classifier; NOT old fine-tuned model"
+  },
+  "limitations": [
+    "Dataset labels are heuristic, not independently human-verified.",
+    "Grouping addresses known templates/IDs/queries/assets; arbitrary semantic paraphrases may remain.",
+    "Manipulation groups share an opening template; other phrases may still recur across groups.",
+    "Source/style artifacts can predict labels even though source metadata is never an input.",
+    "Original source splits are provenance only; these are new grouped train/validation/test partitions.",
+    "Authors, domains and subreddits are not held out wholesale; evaluation is not unseen-source generalization.",
+    "Previous test/sanity results informed Native-Ads correction; this is regression evaluation, not an untouched test."
+  ],
+  "preserved_split_manifest": "C:\\Users\\97250\\Desktop\\FinPro\\results\\distilbert_six_category\\split_manifest.csv",
+  "preserved_split_manifest_sha256": "1a04b6c726675620c6f8ac754be3e5f46a7cf35add0beb20d3815ab0315ac57e",
+  "split_manifest_sha256": "5149b198301db87d72ec016b803da03683f99ec9b1e3bb449295fc0cd37d5e94"
+}
