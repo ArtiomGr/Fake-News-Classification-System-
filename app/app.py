@@ -6,8 +6,8 @@ import pandas as pd
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT / "src") not in sys.path:
-    sys.path.insert(0, str(ROOT / "src"))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 # ============================================================
 # Project paths
@@ -16,9 +16,6 @@ if str(ROOT / "src") not in sys.path:
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = PROJECT_ROOT / "src"
 RESULTS_DIR = PROJECT_ROOT / "results"
-
-if str(SRC_DIR) not in sys.path:
-    sys.path.append(str(SRC_DIR))
 
 from src.predict import predict_sentiment, predict_text
 
