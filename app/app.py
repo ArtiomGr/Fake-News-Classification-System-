@@ -1,9 +1,13 @@
+"""University defense dashboard for the final, locally trained comparison."""
 import sys
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(ROOT / "src"))
 
 # ============================================================
 # Project paths
@@ -276,6 +280,58 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+APP_NAME = "Fake News & Content Classification System"
+st.set_page_config(page_title=APP_NAME, page_icon="🔎", layout="wide", initial_sidebar_state="collapsed")
+st.markdown("""
+<style>
+:root { --navy:#0b1739; --blue:#315efb; --cyan:#19b8d4; --violet:#7557e8; --ink:#13213c; --muted:#66758d; --panel:#ffffff; --line:#dce4ef; }
+.stApp { background: radial-gradient(circle at 85% 5%, #e8eeff 0, transparent 25%), #f5f7fb; color: var(--ink); }
+.block-container { max-width: 1380px; padding-top: 1.15rem; padding-bottom: 2.5rem; }
+[data-testid="stHeader"] { background: transparent; }
+[data-testid="stSidebar"] { background: #0b1739; }
+[data-testid="stSidebar"] * { color: #eef4ff !important; }
+h1,h2,h3 { color: var(--ink); letter-spacing:-.025em; }
+h2 { margin-top:.8rem !important; }
+.hero { background: linear-gradient(120deg,#0b1739 0%,#172d65 58%,#314ec9 100%); border-radius:24px; padding:30px 34px; color:white; box-shadow:0 18px 45px rgba(26,50,105,.18); margin-bottom:18px; }
+.hero .eyebrow { font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; opacity:.78; font-weight:700; }
+.hero h1 { color:white !important; font-size:clamp(2rem,4vw,3.25rem) !important; margin:.25rem 0 .35rem; }
+.hero p { margin:0; color:#dce6ff; font-size:1.05rem; max-width:850px; }
+.model-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0 22px; }
+.model-chip { background:white; border:1px solid var(--line); border-radius:16px; padding:15px 17px; box-shadow:0 7px 20px rgba(31,48,84,.06); }
+.model-chip b { display:block; color:var(--ink); font-size:1.02rem; }
+.model-chip span { color:var(--muted); font-size:.82rem; }
+.model-chip strong { float:right; color:#315efb; font-size:.95rem; }
+.section-kicker { color:#315efb; font-weight:800; font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:-.25rem; }
+.input-shell { background:white; border:1px solid var(--line); border-radius:20px; padding:8px 14px 14px; box-shadow:0 10px 28px rgba(31,48,84,.07); }
+.stTextArea textarea { border-radius:14px !important; background:#fbfcff !important; border:1px solid #d9e2f0 !important; font-size:1rem !important; }
+.stButton button { border-radius:12px !important; font-weight:700 !important; min-height:44px; }
+.stButton button[kind="primary"] { background:linear-gradient(90deg,#315efb,#6048e8) !important; border:0 !important; color:white !important; box-shadow:0 8px 18px rgba(49,94,251,.2); }
+[data-testid="stVerticalBlockBorderWrapper"] { background:white; border:1px solid var(--line); border-radius:18px; box-shadow:0 8px 24px rgba(31,48,84,.06); }
+[data-testid="stMetricLabel"] { color:var(--muted); font-weight:600; }
+[data-testid="stMetricValue"] { color:var(--ink); font-weight:800; }
+[data-baseweb="tab-list"] { gap:8px; }
+button[data-baseweb="tab"] { font-weight:700; border-radius:10px; }
+[data-testid="stAlert"] { border-radius:14px; }
+[data-testid="stDataFrame"] { border-radius:12px; overflow:hidden; }
+.project-footer { color:#77859a; font-size:.8rem; border-top:1px solid var(--line); padding-top:1rem; margin-top:1.5rem; text-align:center; }
+@media(max-width:900px){ .model-strip{grid-template-columns:repeat(2,1fr)} .hero{padding:24px} }
+@media(max-width:600px){ .model-strip{grid-template-columns:1fr} .block-container{padding:1rem} }
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="hero">
+  <div class="eyebrow">University Final Project · NLP & Machine Learning</div>
+  <h1>Fake News & Content Classification System</h1>
+  <p>Multi-model analysis across six content categories using BERT, DistilBERT and TF-IDF + Logistic Regression, with independent VADER sentiment analysis.</p>
+</div>
+<div class="model-strip">
+  <div class="model-chip"><strong>97.48%</strong><b>BERT</b><span>Transformer · Test accuracy</span></div>
+  <div class="model-chip"><strong>97.87%</strong><b>DistilBERT</b><span>Transformer · Test accuracy</span></div>
+  <div class="model-chip"><strong>84.16%</strong><b>Logistic Regression</b><span>TF-IDF baseline · Test accuracy</span></div>
+  <div class="model-chip"><strong>Sentiment</strong><b>VADER</b><span>Independent emotional-tone analysis</span></div>
+</div>
+""", unsafe_allow_html=True)
 
 # ============================================================
 # Helper functions
@@ -438,6 +494,7 @@ with st.sidebar:
         st.write(label)
 
     st.divider()
+    st.caption("Three classifiers · one frozen dataset\n\nVADER provides separate sentiment analysis.\n\nLocal inference · no external API")
 
     st.caption(
         "Ruppin Academic Center\n\n"
@@ -575,7 +632,6 @@ if analyze_button:
         )
 
     else:
-
         try:
 
             with st.spinner(
@@ -827,6 +883,27 @@ if analyze_button:
                 )
 
         except Exception as error:
+            st.error("The analysis could not be completed. All three final local classifiers are required.")
+            with st.expander("Technical details"):
+                st.exception(error)
+
+analysis = st.session_state.get("analysis")
+if analysis and analysis["text"] == text and analysis["signature"] == signature:
+    show_results(analysis["classification"])
+    st.markdown('<div class="section-kicker">Independent signal</div>', unsafe_allow_html=True)
+    st.subheader("VADER Sentiment Analysis")
+    st.caption("VADER measures emotional tone independently. Its scores do not determine any classifier's category.")
+    if "sentiment" in analysis:
+        sentiment = analysis["sentiment"]
+        with st.container(border=True):
+            columns = st.columns(5)
+            columns[0].metric("Overall Sentiment", sentiment["sentiment_label"])
+            columns[1].metric("Compound Score", f"{sentiment['compound']:.3f}")
+            for column, key in zip(columns[2:], ("positive", "neutral", "negative")):
+                column.metric(key.capitalize(), f"{sentiment[key]:.1%}")
+        st.caption("Compound score: −1 (negative) to +1 (positive).")
+    else:
+        st.warning("Sentiment is unavailable; the three classification results above are complete.")
 
             st.error(
                 "The analysis could not be completed."

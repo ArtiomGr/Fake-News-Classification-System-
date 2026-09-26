@@ -1,7 +1,6 @@
-# Python virtual environment
+# Local environments, caches and editor state
 .venv/
-
-# Python cache
+venv/
 __pycache__/
 *.pyc
 
@@ -16,9 +15,55 @@ BERT_Final/BERT_model.zip
 
 # Jupyter
 .ipynb_checkpoints/
-
-# VS Code
 .vscode/
+Thumbs.db
+.DS_Store
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.log
+*.tmp
+*.sqlite3
+*.sqlite3-*
+/handoff/
+
+# Retain only the final processed dataset and its report, never raw/intermediate data.
+/data/*
+!/data/processed/
+/data/processed/*
+!/data/processed/final_six_category_dataset.csv
+!/data/processed/final_dataset_report.txt
+
+# Explicit production-model allowlist. Transformer weights travel separately.
+/models/*
+!/models/artifact_manifest.json
+!/models/bert_six_category_final/
+!/models/distilbert_six_category_native_ads_corrected/
+!/models/logistic_regression_six_category_final/
+/models/bert_six_category_final/*
+/models/distilbert_six_category_native_ads_corrected/*
+/models/logistic_regression_six_category_final/*
+!/models/bert_six_category_final/config.json
+!/models/bert_six_category_final/experiment.json
+!/models/bert_six_category_final/label_mapping.json
+!/models/bert_six_category_final/tokenizer.json
+!/models/bert_six_category_final/tokenizer_config.json
+!/models/distilbert_six_category_native_ads_corrected/config.json
+!/models/distilbert_six_category_native_ads_corrected/label_mapping.json
+!/models/distilbert_six_category_native_ads_corrected/tokenizer.json
+!/models/distilbert_six_category_native_ads_corrected/tokenizer_config.json
+!/models/logistic_regression_six_category_final/experiment.json
+!/models/logistic_regression_six_category_final/label_mapping.json
+!/models/logistic_regression_six_category_final/pipeline.joblib
+/BERT_Final/BERT_model.zip
+/BERT_Final/BERT_model/
+**/checkpoints/
+**/checkpoint-*/
+*.safetensors
+*.pt
+*.pth
+training_args.bin
 
 # Windows
 Thumbs.db

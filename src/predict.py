@@ -131,6 +131,10 @@ def huggingface_arguments():
 
     return {}
 
+def load_classifier(model_name="DistilBERT"):
+    """Compatibility helper; loaded once per model/artifact version."""
+    with _INFERENCE_LOCK:
+        return _resources(model_name)[0]
 
 # ============================================================
 # Model loading
@@ -209,7 +213,8 @@ def load_logistic_regression():
 # VADER sentiment analyzer
 # ============================================================
 
-sentiment_analyzer = SentimentIntensityAnalyzer()
+def _normalize_text(text):
+    return " ".join(str(text).split()) if text is not None else ""
 
 
 def predict_sentiment(text):
@@ -698,18 +703,9 @@ if __name__ == "__main__":
     print("=" * 70)
 
     while True:
-        text = input(
-            "\nEnter news text "
-            "(or type EXIT):\n> "
-        )
-
+        text = input("\nEnter text (or EXIT):\n> ")
         if text.strip().lower() == "exit":
             break
-
-        if not text.strip():
-            print("Please enter valid text.")
-            continue
-
         try:
             results = predict_text(text)
             sentiment = predict_sentiment(text)

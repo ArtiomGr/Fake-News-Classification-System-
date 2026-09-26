@@ -114,21 +114,8 @@ summary = pd.DataFrame(
             best_f1_row["F1"]
         ]
     }
-)
-
-summary.to_csv(
-    RESULTS_DIR / "best_model_summary.csv",
-    index=False
-)
+    (output / "model_registry.json").write_text(json.dumps(registry, indent=2) + "\n", encoding="utf-8")
 
 
-print("\nSaved:")
-print("results/model_comparison.csv")
-print("results/accuracy_comparison.png")
-print("results/f1_comparison.png")
-print("results/overall_model_comparison.png")
-print("results/best_model_summary.csv")
-
-print("\n" + "=" * 70)
-print("MODEL COMPARISON COMPLETED SUCCESSFULLY")
-print("=" * 70)
+if __name__ == "__main__":
+    main()

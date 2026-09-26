@@ -1,0 +1,37 @@
+number,model,intended_category,predicted_project_label,predicted_category,confidence,matches_intended_category
+1,BERT,Native Advertising,3,Propaganda,0.9933748841285706,False
+1,DistilBERT,Native Advertising,3,Propaganda,0.9971178770065308,False
+1,Logistic Regression,Native Advertising,6,Fabrication,0.42916428718128957,False
+2,BERT,Native Advertising,1,Native Advertising,0.9699077606201172,True
+2,DistilBERT,Native Advertising,1,Native Advertising,0.6786684393882751,True
+2,Logistic Regression,Native Advertising,1,Native Advertising,0.3471986453305188,True
+3,BERT,News Satire,5,News Parody,0.9956242442131042,False
+3,DistilBERT,News Satire,5,News Parody,0.935798168182373,False
+3,Logistic Regression,News Satire,5,News Parody,0.5783966965947855,False
+4,BERT,News Satire,2,News Satire,0.9970625042915344,True
+4,DistilBERT,News Satire,2,News Satire,0.9964746236801147,True
+4,Logistic Regression,News Satire,2,News Satire,0.6710694959843314,True
+5,BERT,Propaganda,3,Propaganda,0.9945833086967468,True
+5,DistilBERT,Propaganda,3,Propaganda,0.9851503968238831,True
+5,Logistic Regression,Propaganda,5,News Parody,0.23157432427787575,False
+6,BERT,Propaganda,3,Propaganda,0.9957972168922424,True
+6,DistilBERT,Propaganda,3,Propaganda,0.9909715056419373,True
+6,Logistic Regression,Propaganda,1,Native Advertising,0.3395043288554642,False
+7,BERT,Manipulation,4,Manipulation,0.9974451661109924,True
+7,DistilBERT,Manipulation,4,Manipulation,0.9972456097602844,True
+7,Logistic Regression,Manipulation,4,Manipulation,0.8598729039568914,True
+8,BERT,Manipulation,4,Manipulation,0.9971376657485962,True
+8,DistilBERT,Manipulation,4,Manipulation,0.9968242049217224,True
+8,Logistic Regression,Manipulation,4,Manipulation,0.5604044712734793,True
+9,BERT,News Parody,5,News Parody,0.9964292645454407,True
+9,DistilBERT,News Parody,5,News Parody,0.9956463575363159,True
+9,Logistic Regression,News Parody,5,News Parody,0.7909329617730808,True
+10,BERT,News Parody,5,News Parody,0.9962406158447266,True
+10,DistilBERT,News Parody,5,News Parody,0.9957926869392395,True
+10,Logistic Regression,News Parody,5,News Parody,0.8361270027558564,True
+11,BERT,Fabrication,6,Fabrication,0.9938356876373291,True
+11,DistilBERT,Fabrication,6,Fabrication,0.9964472651481628,True
+11,Logistic Regression,Fabrication,5,News Parody,0.3632772948449974,False
+12,BERT,Fabrication,6,Fabrication,0.9915329813957214,True
+12,DistilBERT,Fabrication,6,Fabrication,0.9885799884796143,True
+12,Logistic Regression,Fabrication,5,News Parody,0.764691330309392,False

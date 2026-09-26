@@ -1,0 +1,54 @@
+{
+  "add_cross_attention": false,
+  "architectures": [
+    "BertForSequenceClassification"
+  ],
+  "attention_probs_dropout_prob": 0.1,
+  "bos_token_id": null,
+  "classifier_dropout": null,
+  "dtype": "float32",
+  "eos_token_id": null,
+  "gradient_checkpointing": false,
+  "hidden_act": "gelu",
+  "hidden_dropout_prob": 0.1,
+  "hidden_size": 768,
+  "id2label": {
+    "0": "Native Advertising",
+    "1": "News Satire",
+    "2": "Propaganda",
+    "3": "Manipulation",
+    "4": "News Parody",
+    "5": "Fabrication"
+  },
+  "initializer_range": 0.02,
+  "intermediate_size": 3072,
+  "is_decoder": false,
+  "label2id": {
+    "Fabrication": 5,
+    "Manipulation": 3,
+    "Native Advertising": 0,
+    "News Parody": 4,
+    "News Satire": 1,
+    "Propaganda": 2
+  },
+  "layer_norm_eps": 1e-12,
+  "max_position_embeddings": 512,
+  "model_type": "bert",
+  "num_attention_heads": 12,
+  "num_hidden_layers": 12,
+  "pad_token_id": 0,
+  "position_embedding_type": "absolute",
+  "project_id2label": {
+    "1": "Native Advertising",
+    "2": "News Satire",
+    "3": "Propaganda",
+    "4": "Manipulation",
+    "5": "News Parody",
+    "6": "Fabrication"
+  },
+  "tie_word_embeddings": true,
+  "transformers_version": "5.15.0",
+  "type_vocab_size": 2,
+  "use_cache": false,
+  "vocab_size": 30522
+}

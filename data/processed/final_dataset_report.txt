@@ -1,0 +1,164 @@
+FINAL SIX-CATEGORY DATASET REPORT
+
+Construction: local source labels and explicit text heuristics; no APIs or generated data.
+Random state: 42; target per category: 1500
+NOT manually verified ground truth. Shortages are retained, never padded.
+
+CATEGORY COUNTS (eligible after dedup; selected; shortage)
+1 Native Advertising: eligible=6041, selected=1500, shortage=0
+2 News Satire: eligible=9688, selected=1500, shortage=0
+3 Propaganda: eligible=2341, selected=1500, shortage=0
+4 Manipulation: eligible=7060, selected=1500, shortage=0
+5 News Parody: eligible=2594, selected=1500, shortage=0
+6 Fabrication: eligible=959, selected=959, shortage=541
+Total records: 8459
+Balanced at 1500 each: False
+
+SOURCE DISTRIBUTION
+  fakeddit: 4058
+  manipulation: 1500
+  native_ads: 1500
+  propaganda: 1401
+
+CATEGORY / SOURCE DISTRIBUTION
+  1 / native_ads: 1500
+  2 / fakeddit: 1500
+  3 / fakeddit: 99
+  3 / propaganda: 1401
+  4 / manipulation: 1500
+  5 / fakeddit: 1500
+  6 / fakeddit: 959
+
+MANIPULATION SUBTYPES
+  charm_flattery: 250
+  direct_coercion: 250
+  gaslighting: 250
+  guilt_tripping: 250
+  love_bombing: 250
+  passive_aggressive: 250
+
+FAKEDDIT SUBREDDITS: 2 News Satire
+  satire: 705
+  theonion: 765
+  waterfordwhispersnews: 30
+
+FAKEDDIT SUBREDDITS: 3 Propaganda
+  propagandaposters: 99
+
+FAKEDDIT SUBREDDITS: 5 News Parody
+  satire: 327
+  theonion: 1146
+  waterfordwhispersnews: 27
+
+FAKEDDIT SUBREDDITS: 6 Fabrication
+  fakefacts: 308
+  fakehistoryporn: 651
+
+ORIGINAL SOURCE / SPLIT
+  fakeddit / test: 389
+  fakeddit / train: 3669
+  manipulation / (unsplit): 1500
+  native_ads / test: 235
+  native_ads / train: 972
+  native_ads / validation: 293
+  propaganda / (unsplit): 1401
+
+FILTERING, DUPLICATE REMOVALS, AND SAMPLING AUDIT
+Rejection counts refer to input rows; eligible pools refer to unique texts.
+Repeated eligible texts are counted as exact-normalized or additional case-equivalent duplicates.
+Conflicting non-satire/parody categories exclude both the stored representative and the repeat.
+  candidate.accepted_before_dedup.1: 6041
+  candidate.accepted_before_dedup.2: 10237
+  candidate.accepted_before_dedup.3: 2351
+  candidate.accepted_before_dedup.4: 7060
+  candidate.accepted_before_dedup.5: 2731
+  candidate.accepted_before_dedup.6: 966
+  combined.loaded.fakeddit: 30000
+  combined.loaded.manipulation: 8455
+  combined.loaded.native_ads: 17300
+  combined.loaded.propaganda: 2799
+  combined.rejected_nonpositive.manipulation: 1395
+  combined.rejected_nonpositive.native_ads: 11259
+  combined.rejected_nonpositive.propaganda: 1398
+  dedup.case_equivalent_repeated_records: 9
+  dedup.exact_normalized_repeated_records: 694
+  fakeddit.loaded.test: 92444
+  fakeddit.loaded.train: 878218
+  fakeddit.rejected.fakefacts.explicit_fictional_universe: 4
+  fakeddit.rejected.fakefacts.not_a_standalone_assertion: 106
+  fakeddit.rejected.fakefacts.readability_length_url_or_discussion: 40
+  fakeddit.rejected.fakefacts.recognizable_factual_event_or_statement: 3
+  fakeddit.rejected.fakefacts.visual_caption_dependency: 7
+  fakeddit.rejected.fakehistoryporn.correction_or_debunk: 5
+  fakeddit.rejected.fakehistoryporn.explicit_fictional_universe: 61
+  fakeddit.rejected.fakehistoryporn.historical_caption_without_invention_indicator: 3273
+  fakeddit.rejected.fakehistoryporn.not_a_standalone_assertion: 36665
+  fakeddit.rejected.fakehistoryporn.readability_length_url_or_discussion: 10523
+  fakeddit.rejected.fakehistoryporn.recognizable_factual_event_or_statement: 76
+  fakeddit.rejected.fakehistoryporn.visual_caption_dependency: 1706
+  fakeddit.rejected.non_target_subreddit: 882874
+  fakeddit.rejected.propagandaposters.no_self_contained_persuasive_language: 8484
+  fakeddit.rejected.propagandaposters.poster_description_visual_or_question: 5305
+  fakeddit.rejected.propagandaposters.readability_length_url_or_discussion: 3360
+  fakeddit.rejected.satire.parody_visual_or_discussion: 2
+  fakeddit.rejected.satire.readability_length_url_or_discussion: 828
+  fakeddit.rejected.satire.satire_visual_quiz_question_or_caption: 363
+  fakeddit.rejected.theonion.parody_visual_or_discussion: 43
+  fakeddit.rejected.theonion.readability_length_url_or_discussion: 602
+  fakeddit.rejected.theonion.satire_visual_quiz_question_or_caption: 1389
+  fakeddit.rejected.waterfordwhispersnews.readability_length_url_or_discussion: 23
+  fakeddit.rejected.waterfordwhispersnews.satire_visual_quiz_question_or_caption: 36
+  selection.not_selected_due_to_target.1: 4541
+  selection.not_selected_due_to_target.2: 8188
+  selection.not_selected_due_to_target.3: 841
+  selection.not_selected_due_to_target.4: 5560
+  selection.not_selected_due_to_target.5: 1094
+  selection.not_selected_due_to_target.6: 0
+
+VALIDATION
+{
+  "records": 8459,
+  "category_counts": {
+    "1": 1500,
+    "2": 1500,
+    "3": 1500,
+    "4": 1500,
+    "5": 1500,
+    "6": 959
+  },
+  "empty_text": 0,
+  "duplicate_normalized_text": 0,
+  "duplicate_casefolded_text": 0,
+  "cross_category_text_overlap": 0,
+  "labels_exactly_1_through_6": true,
+  "category_names_match": true
+}
+No normalized text occurs in multiple categories.
+
+SELECTION RULES
+1: combined native_ads original_label=1; seeded sampling.
+2: full Fakeddit satire sources; public/social-affairs keyword matches first; exclude parody pool.
+3: all available combined propaganda positives first; then persuasive standalone slogan candidates.
+4: combined manipulation true; equal subtype quotas when available.
+5: subset of previously identified news-pattern/ClickHole parody pool; news-format matches first.
+6: fakefacts assertions and fakehistoryporn assertions with invention-related cues; no quota padding.
+Image presence alone is never an exclusion; explicit visual/caption dependency is screened in text.
+
+LIMITATIONS
+Heuristic filtering is not manual verification; all six labels remain source-supervised or heuristic.
+Satire and parody overlap conceptually; keyword/domain selection cannot establish author intent.
+Fabrication screening does not verify falsity or establish presentation as genuine.
+Jokes, genuine facts, subtle captions, and non-news assertions may survive Fabrication screening.
+The recognizable-real-event exclusion list is conservative and incomplete, not a fact-checker.
+Poster titles may quote persuasive slogans but can still require context or an image.
+Readability gates are English-oriented and can reject useful short or non-English titles.
+Source labels do not certify human authorship; no new synthetic text was generated.
+No ordinary historical caption was used solely to fill the Fabrication quota.
+Only exact and case/whitespace-equivalent duplicates are removed; semantic/template leakage remains possible.
+Raw training and test records are pooled and original splits preserved; this is NOT an evaluation split.
+Do not evaluate on overlapping original datasets. Group related claims/templates before a future split.
+Matched IDs/splits describe accepted duplicate candidates; they are not an exhaustive related-record graph.
+No model training or application changes were performed.
+
+CSV: C:\Users\97250\Desktop\FinPro\data\processed\final_six_category_dataset.csv
+REPORT: C:\Users\97250\Desktop\FinPro\data\processed\final_dataset_report.txt

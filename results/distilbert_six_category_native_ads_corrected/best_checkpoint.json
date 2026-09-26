@@ -1,0 +1,4 @@
+{
+  "checkpoint": "C:\\Users\\97250\\Desktop\\FinPro\\models\\distilbert_six_category_native_ads_corrected\\checkpoints\\checkpoint-1113",
+  "validation_macro_f1": 0.9842883723789925
+}

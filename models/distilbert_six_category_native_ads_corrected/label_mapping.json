@@ -1,0 +1,34 @@
+{
+  "project_id_to_category": {
+    "1": "Native Advertising",
+    "2": "News Satire",
+    "3": "Propaganda",
+    "4": "Manipulation",
+    "5": "News Parody",
+    "6": "Fabrication"
+  },
+  "internal_id_to_category": {
+    "0": "Native Advertising",
+    "1": "News Satire",
+    "2": "Propaganda",
+    "3": "Manipulation",
+    "4": "News Parody",
+    "5": "Fabrication"
+  },
+  "category_to_internal_id": {
+    "Native Advertising": 0,
+    "News Satire": 1,
+    "Propaganda": 2,
+    "Manipulation": 3,
+    "News Parody": 4,
+    "Fabrication": 5
+  },
+  "internal_id_to_project_id": {
+    "0": 1,
+    "1": 2,
+    "2": 3,
+    "3": 4,
+    "4": 5,
+    "5": 6
+  }
+}

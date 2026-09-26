@@ -1,0 +1,51 @@
+{
+  "Native Advertising": {
+    "precision": 0.87109375,
+    "recall": 0.9911111111111112,
+    "f1-score": 0.9272349272349273,
+    "support": 225.0
+  },
+  "News Satire": {
+    "precision": 0.8697478991596639,
+    "recall": 0.92,
+    "f1-score": 0.8941684665226782,
+    "support": 225.0
+  },
+  "Propaganda": {
+    "precision": 1.0,
+    "recall": 0.3511111111111111,
+    "f1-score": 0.5197368421052632,
+    "support": 225.0
+  },
+  "Manipulation": {
+    "precision": 1.0,
+    "recall": 0.9911111111111112,
+    "f1-score": 0.9955357142857143,
+    "support": 225.0
+  },
+  "News Parody": {
+    "precision": 0.6625766871165644,
+    "recall": 0.96,
+    "f1-score": 0.7840290381125227,
+    "support": 225.0
+  },
+  "Fabrication": {
+    "precision": 0.8707482993197279,
+    "recall": 0.8888888888888888,
+    "f1-score": 0.8797250859106529,
+    "support": 144.0
+  },
+  "accuracy": 0.8479117415287628,
+  "macro avg": {
+    "precision": 0.8790277725993261,
+    "recall": 0.8503703703703703,
+    "f1-score": 0.8334050123619597,
+    "support": 1269.0
+  },
+  "weighted avg": {
+    "precision": 0.8795562496171727,
+    "recall": 0.8479117415287628,
+    "f1-score": 0.8304484119226815,
+    "support": 1269.0
+  }
+}

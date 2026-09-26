@@ -1,0 +1,8 @@
+# Model, dataset and evaluation hashes are byte-sensitive across Windows/Linux.
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+requirements.txt text eol=lf
+/models/** -text
+/results/** -text
+/data/processed/final_six_category_dataset.csv -text

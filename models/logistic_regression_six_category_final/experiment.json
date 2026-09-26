@@ -1,0 +1,47 @@
+{
+  "model": "Logistic Regression",
+  "dataset": "C:\\Users\\97250\\Desktop\\FinPro\\data\\processed\\final_six_category_dataset.csv",
+  "dataset_sha256": "a44b118d36942a151b99c8907ef613f98a0ad34bc566d22f3419c2ee41a54842",
+  "split_manifest": "C:\\Users\\97250\\Desktop\\FinPro\\results\\distilbert_six_category_native_ads_corrected\\split_manifest.csv",
+  "split_manifest_sha256": "5149b198301db87d72ec016b803da03683f99ec9b1e3bb449295fc0cd37d5e94",
+  "split_totals": {
+    "train": 5921,
+    "validation": 1269,
+    "test": 1269
+  },
+  "random_state": 42,
+  "source_plan": "C:\\Users\\97250\\Desktop\\FinPro\\results\\distilbert_six_category_native_ads_corrected\\training_plan.json",
+  "limitations": [
+    "Dataset labels are heuristic, not independently human-verified.",
+    "Grouping addresses known templates/IDs/queries/assets; arbitrary semantic paraphrases may remain.",
+    "Manipulation groups share an opening template; other phrases may still recur across groups.",
+    "Source/style artifacts can predict labels even though source metadata is never an input.",
+    "Original source splits are provenance only; these are new grouped train/validation/test partitions.",
+    "Authors, domains and subreddits are not held out wholesale; evaluation is not unseen-source generalization.",
+    "Previous test/sanity results informed Native-Ads correction; this is regression evaluation, not an untouched test."
+  ],
+  "versions": {
+    "torch": "2.13.0",
+    "transformers": "5.15.0",
+    "scikit-learn": "1.9.0",
+    "numpy": "2.5.2"
+  },
+  "hyperparameters": {
+    "max_features": 30000,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "max_df": 0.95,
+    "sublinear_tf": true,
+    "stop_words": null,
+    "C": 1.0,
+    "class_weight": "balanced",
+    "solver": "lbfgs",
+    "max_iter": 2000,
+    "tol": 0.0001,
+    "random_state": 42
+  },
+  "feature_fitting": "Vocabulary and IDF fitted exclusively to the 5,921 frozen training rows; negation retained"
+}

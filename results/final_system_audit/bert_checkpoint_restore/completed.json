@@ -1,0 +1,9 @@
+{
+  "training_performed": false,
+  "checkpoint": "C:\\Users\\97250\\Desktop\\FinPro\\models\\bert_six_category_final\\checkpoints\\checkpoint-742",
+  "before_weights_sha256": "e636983daa84e37f4023b00bc89ab52cb9773c654f20e0d684d50fb4fd934001",
+  "final_weights_sha256": "c3847eaed08216d411424d42e556d478ed4fa5ca182179a71e69149d742037c6",
+  "all_checkpoint_tensors_verified": true,
+  "cause": "Trainer raw load_state_dict skipped BERT LayerNorm gamma/beta keys; from_pretrained converts them to weight/bias",
+  "evaluation": "Frozen validation and test rows, max_length=512, batch_size=16, model.eval(), no gradients"
+}

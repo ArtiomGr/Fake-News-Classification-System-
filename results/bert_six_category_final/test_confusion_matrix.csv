@@ -1,0 +1,7 @@
+true_category / predicted_category,Native Advertising,News Satire,Propaganda,Manipulation,News Parody,Fabrication
+Native Advertising,225,0,0,0,0,0
+News Satire,1,210,1,0,11,2
+Propaganda,0,0,222,0,1,2
+Manipulation,0,0,0,225,0,0
+News Parody,0,6,2,0,216,1
+Fabrication,0,3,0,0,2,139
