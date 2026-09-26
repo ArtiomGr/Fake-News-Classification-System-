@@ -20,7 +20,7 @@ RESULTS_DIR = PROJECT_ROOT / "results"
 if str(SRC_DIR) not in sys.path:
     sys.path.append(str(SRC_DIR))
 
-from predict import predict_sentiment, predict_text
+from src.predict import predict_sentiment, predict_text
 
 
 # ============================================================
@@ -280,8 +280,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-APP_NAME = "Fake News & Content Classification System"
-st.set_page_config(page_title=APP_NAME, page_icon="🔎", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""
 <style>
 :root { --navy:#0b1739; --blue:#315efb; --cyan:#19b8d4; --violet:#7557e8; --ink:#13213c; --muted:#66758d; --panel:#ffffff; --line:#dce4ef; }
@@ -886,35 +884,6 @@ if analyze_button:
             st.error("The analysis could not be completed. All three final local classifiers are required.")
             with st.expander("Technical details"):
                 st.exception(error)
-
-analysis = st.session_state.get("analysis")
-if analysis and analysis["text"] == text and analysis["signature"] == signature:
-    show_results(analysis["classification"])
-    st.markdown('<div class="section-kicker">Independent signal</div>', unsafe_allow_html=True)
-    st.subheader("VADER Sentiment Analysis")
-    st.caption("VADER measures emotional tone independently. Its scores do not determine any classifier's category.")
-    if "sentiment" in analysis:
-        sentiment = analysis["sentiment"]
-        with st.container(border=True):
-            columns = st.columns(5)
-            columns[0].metric("Overall Sentiment", sentiment["sentiment_label"])
-            columns[1].metric("Compound Score", f"{sentiment['compound']:.3f}")
-            for column, key in zip(columns[2:], ("positive", "neutral", "negative")):
-                column.metric(key.capitalize(), f"{sentiment[key]:.1%}")
-        st.caption("Compound score: −1 (negative) to +1 (positive).")
-    else:
-        st.warning("Sentiment is unavailable; the three classification results above are complete.")
-
-            st.error(
-                "The analysis could not be completed."
-            )
-
-            with st.expander(
-                "Show technical error"
-            ):
-
-                st.exception(error)
-
 
 # ============================================================
 # Research model comparison
