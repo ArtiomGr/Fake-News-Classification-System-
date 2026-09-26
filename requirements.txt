@@ -1,14 +1,10 @@
-# Tested project environment: Python 3.13. Pin serialization-sensitive dependencies.
-torch==2.13.0
-transformers==5.15.0
-pandas==3.0.5
-numpy==2.5.2
-scikit-learn==1.9.0
-datasets==5.0.1
-matplotlib==3.11.1
-streamlit==1.61.1
-vaderSentiment==3.3.2
-joblib==1.5.3
-accelerate==1.14.0
-pyarrow==24.0.0
-safetensors==0.8.0
+torch
+transformers
+pandas
+numpy
+scikit-learn
+datasets
+matplotlib
+streamlit
+vaderSentiment
+huggingface_hub
