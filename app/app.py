@@ -905,16 +905,6 @@ if analysis and analysis["text"] == text and analysis["signature"] == signature:
     else:
         st.warning("Sentiment is unavailable; the three classification results above are complete.")
 
-            st.error(
-                "The analysis could not be completed."
-            )
-
-            with st.expander(
-                "Show technical error"
-            ):
-
-                st.exception(error)
-
 
 # ============================================================
 # Research model comparison
