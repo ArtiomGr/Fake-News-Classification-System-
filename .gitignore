@@ -2,18 +2,10 @@
 .venv/
 venv/
 __pycache__/
-*.pyc
-
-# Large datasets
-data/*.tsv
-data/*.csv
-data/*.zip
-
-# Trained models
-models/
-BERT_Final/BERT_model.zip
-
-# Jupyter
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.cache/
 .ipynb_checkpoints/
 .vscode/
 Thumbs.db
@@ -65,5 +57,16 @@ Thumbs.db
 *.pth
 training_args.bin
 
-# Windows
-Thumbs.db
+# Final metrics, plans and provenance remain visible. Logs/history are local only.
+/results/**/training_history.json
+# Superseded run: keep only provenance required by the correction audits.
+/results/distilbert_six_category/*
+!/results/distilbert_six_category/split_manifest.csv
+!/results/distilbert_six_category/training_plan.json
+# Exclude duplicated exports, runtime diagnostics and machine-specific inventories.
+/results/final_system_audit/*
+!/results/final_system_audit/final_report.md
+!/results/final_system_audit/travelpro_parity.json
+!/results/final_system_audit/bert_checkpoint_restore/
+/results/final_system_audit/bert_checkpoint_restore/*
+!/results/final_system_audit/bert_checkpoint_restore/completed.json
