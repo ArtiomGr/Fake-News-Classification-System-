@@ -1,0 +1,15 @@
+case,status,reason,contract_valid,category,confidence
+empty,rejected,Input text cannot be empty,,,
+whitespace,rejected,Input text cannot be empty,,,
+none,rejected,Input text cannot be empty,,,
+over_limit,rejected,"Please limit each analysis to 50,000 characters",,,
+punctuation,prediction,,True,Propaganda,0.9999999983597458
+emoji,prediction,,True,Propaganda,0.9997941123441426
+unicode,prediction,,True,News Parody,0.9979621587964833
+non_english,prediction,,True,News Parody,0.429891862389128
+zero_width,rejected,Input text contains no usable tokens,,,
+url_only,prediction,,True,News Parody,0.9917376968438396
+negation,prediction,,True,Propaganda,0.9999137425837559
+mixed_tone,prediction,,True,Propaganda,0.9999999110678556
+very_short,prediction,,True,News Parody,0.9749322882106324
+max_characters,prediction,,True,News Parody,0.9819525538073435

@@ -1,0 +1,12 @@
+{
+  "tests_run": 56,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "successful": true,
+  "seconds": 90.15966989999288,
+  "protected_files_verified": 79,
+  "python": "C:\\Users\\97250\\AppData\\Local\\Temp\\finpro-phase15-runtime\\env\\Scripts\\python.exe",
+  "checkpoint_access": false,
+  "scope": "Complete unittest discovery in tests/, including unchanged Streamlit behavior and new fusion tests"
+}

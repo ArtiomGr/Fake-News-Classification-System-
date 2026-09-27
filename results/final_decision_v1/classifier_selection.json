@@ -1,0 +1,10 @@
+{
+  "selected_classifier": "DistilBERT",
+  "criterion": "validation macro F1",
+  "validation_macro_f1": {
+    "BERT": 0.9838952897556944,
+    "DistilBERT": 0.9842883723789925,
+    "Logistic Regression": 0.8334050123619597
+  },
+  "test_used_for_selection": false
+}

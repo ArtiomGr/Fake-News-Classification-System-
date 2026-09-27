@@ -1,0 +1,93 @@
+{
+  "cases": [
+    {
+      "case": "empty",
+      "status": "rejected",
+      "reason": "Input text cannot be empty"
+    },
+    {
+      "case": "whitespace",
+      "status": "rejected",
+      "reason": "Input text cannot be empty"
+    },
+    {
+      "case": "none",
+      "status": "rejected",
+      "reason": "Input text cannot be empty"
+    },
+    {
+      "case": "over_limit",
+      "status": "rejected",
+      "reason": "Please limit each analysis to 50,000 characters"
+    },
+    {
+      "case": "punctuation",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "Propaganda",
+      "confidence": 0.9999999983597458
+    },
+    {
+      "case": "emoji",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "Propaganda",
+      "confidence": 0.9997941123441426
+    },
+    {
+      "case": "unicode",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "News Parody",
+      "confidence": 0.9979621587964833
+    },
+    {
+      "case": "non_english",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "News Parody",
+      "confidence": 0.429891862389128
+    },
+    {
+      "case": "zero_width",
+      "status": "rejected",
+      "reason": "Input text contains no usable tokens"
+    },
+    {
+      "case": "url_only",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "News Parody",
+      "confidence": 0.9917376968438396
+    },
+    {
+      "case": "negation",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "Propaganda",
+      "confidence": 0.9999137425837559
+    },
+    {
+      "case": "mixed_tone",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "Propaganda",
+      "confidence": 0.9999999110678556
+    },
+    {
+      "case": "very_short",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "News Parody",
+      "confidence": 0.9749322882106324
+    },
+    {
+      "case": "max_characters",
+      "status": "prediction",
+      "contract_valid": true,
+      "category": "News Parody",
+      "confidence": 0.9819525538073435
+    }
+  ],
+  "scope": "Input and numerical robustness; accepted non-English/emoji/URL outputs are not evidence of semantic accuracy. Closed six-category taxonomy is unchanged."
+}

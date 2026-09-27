@@ -1,0 +1,20 @@
+{
+  "phases": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "complete": true,
+  "protected_files_unchanged": 79,
+  "streamlit_changed": false,
+  "continuation_snapshot_files": 62244,
+  "continuation_baseline_files_unchanged": 62243,
+  "strict_workspace_all_unchanged": false,
+  "protected_project_content_unchanged": true,
+  "integrity_exception": "Codex turn-capture Git reference and added Git objects; see integrity_assessment.json",
+  "independent_test_claim_supported": false,
+  "numeric_product_thresholds_verified": false,
+  "ready_for_interface_integration": true
+}

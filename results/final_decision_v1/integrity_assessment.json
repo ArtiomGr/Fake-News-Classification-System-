@@ -1,0 +1,11 @@
+{
+  "protected_project_content_unchanged": true,
+  "strict_workspace_all_unchanged": false,
+  "git_only_differences": true,
+  "changed_or_removed_git_paths": [
+    ".git/refs/codex/turn-diffs/captures/1790511364860/db193d84-4acb-4272-90fa-709e06e4caa1/base"
+  ],
+  "added_git_object_count": 86,
+  "interpretation": "Differences confined to a Codex turn-capture reference and added Git objects, consistent with tool-managed capture bookkeeping. Strict raw verification remains false; no baseline was rewritten or Git content restored.",
+  "ready_for_interface_integration": true
+}
