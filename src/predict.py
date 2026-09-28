@@ -17,178 +17,74 @@ DISTILBERT_DIR = MODEL_PATHS["DistilBERT"]
 MODEL_NAMES = tuple(MODEL_PATHS)
 TRANSFORMER_MAX_LENGTH = 512
 CHUNK_OVERLAP_TOKENS = 16
+MAX_INPUT_CHARACTERS = 50_000
+_INFERENCE_LOCK = RLock()
 
 
-# ============================================================
-# Device configuration
-# ============================================================
-
-device = torch.device(
-    "cuda" if torch.cuda.is_available() else "cpu"
-)
-
-print(f"Using device: {device}")
-
-
-# ============================================================
-# Resolve model source
-# ============================================================
-
-def resolve_model_source(
-    local_directory,
-    huggingface_repository,
-):
-    """
-    Use a local trained model when its config.json exists.
-    Otherwise, load the model from Hugging Face.
-    """
-
-    config_path = local_directory / "config.json"
-
-    if config_path.is_file():
-        return str(local_directory)
-
-    return huggingface_repository
+def artifact_fingerprint():
+    """Cache identity includes exact paths and artifact versions, not just a name."""
+    signature = []
+    for name, path in MODEL_PATHS.items():
+        for filename in ("config.json", "model.safetensors", "tokenizer.json", "tokenizer_config.json",
+                         "label_mapping.json", "pipeline.joblib", "experiment.json"):
+            file = path / filename
+            stat = file.stat() if file.is_file() else None
+            signature.append((name, str(file.resolve()), stat.st_mtime_ns if stat else None, stat.st_size if stat else None))
+    registry = ROOT / "results/final_model_comparison/model_registry.json"
+    stat = registry.stat() if registry.is_file() else None
+    signature.append(("registry", str(registry), stat.st_mtime_ns if stat else None, stat.st_size if stat else None))
+    return tuple(signature)
 
 
-BERT_SOURCE = resolve_model_source(
-    LOCAL_BERT_DIR,
-    HUGGING_FACE_BERT,
-)
-
-DISTILBERT_SOURCE = resolve_model_source(
-    LOCAL_DISTILBERT_DIR,
-    HUGGING_FACE_DISTILBERT,
-)
-
-
-# ============================================================
-# Hugging Face authentication arguments
-# ============================================================
-
-def huggingface_arguments():
-    """
-    Return authentication arguments only when an HF token exists.
-    Public repositories do not require a token.
-    """
-
-    if HF_TOKEN:
-        return {
-            "token": HF_TOKEN,
-        }
-
-    return {}
-
-def load_classifier(model_name="DistilBERT"):
-    """Compatibility helper; loaded once per model/artifact version."""
-    with _INFERENCE_LOCK:
-        return _resources(model_name)[0]
-
-# ============================================================
-# Model loading
-# ============================================================
-
-@lru_cache(maxsize=2)
-def load_transformer_model(model_source):
-    """
-    Load and cache one Transformer tokenizer and model.
-
-    Caching prevents Streamlit from downloading and loading
-    the same model again on every application rerun.
-    """
-
-    print(f"Loading Transformer model from: {model_source}")
-
-    authentication = huggingface_arguments()
-
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_source,
-        **authentication,
-    )
-
-    model = (
-        AutoModelForSequenceClassification.from_pretrained(
-            model_source,
-            **authentication,
-        )
-    )
-
-    model.to(device)
-    model.eval()
-
-    print(f"Model loaded successfully: {model_source}")
-
-    return tokenizer, model
+def get_model_metadata(model_name="DistilBERT"):
+    path = MODEL_PATHS[model_name]
+    required = ["pipeline.joblib", "experiment.json", "label_mapping.json"] if model_name == "Logistic Regression" else [
+        "model.safetensors", "config.json", "tokenizer.json", "tokenizer_config.json", "label_mapping.json"]
+    missing = [name for name in required if not (path / name).is_file()]
+    if missing:
+        raise FileNotFoundError(f"Final local {model_name} model is incomplete at {path}: {', '.join(missing)}")
+    mapping = read_json(path / "label_mapping.json")
+    if mapping != MAPPING:
+        raise ValueError(f"{model_name} mapping does not match the final project task")
+    projects = {int(k): v for k, v in mapping["project_id_to_category"].items()}
+    internal = {int(k): v for k, v in mapping["internal_id_to_category"].items()}
+    to_project = {int(k): int(v) for k, v in mapping["internal_id_to_project_id"].items()}
+    if set(projects) != set(range(1, 7)) or set(internal) != set(range(6)):
+        raise ValueError("Expected exactly six final project categories")
+    source_plan = read_json(DISTIL_RESULTS / "training_plan.json")
+    if model_name != "DistilBERT":
+        experiment = read_json(path / "experiment.json")
+        if any(experiment[key] != source_plan[key] for key in ("dataset_sha256", "split_manifest_sha256")):
+            raise ValueError(f"{model_name} was not trained on the frozen final dataset/split")
+    if model_name != "Logistic Regression":
+        config = read_json(path / "config.json")
+        if ({int(k): v for k, v in config["id2label"].items()} != internal
+                or config["label2id"] != {v: k for k, v in internal.items()}):
+            raise ValueError(f"{model_name} config and project label mapping disagree")
+        expected_type = "bert" if model_name == "BERT" else "distilbert"
+        tokenizer_config = read_json(path / "tokenizer_config.json")
+        if config["model_type"] != expected_type or config["max_position_embeddings"] < TRANSFORMER_MAX_LENGTH:
+            raise ValueError("Unexpected model architecture or input limit")
+        if tokenizer_config["model_max_length"] != TRANSFORMER_MAX_LENGTH:
+            raise ValueError("Tokenizer input limit differs from the trained 512-token configuration")
+    return {"model_name": model_name, "model_path": str(path),
+            "tokenizer_path": str(path) if model_name != "Logistic Regression" else None,
+            "project_labels": dict(sorted(projects.items())), "internal_labels": internal,
+            "internal_to_project": to_project,
+            "max_length": TRANSFORMER_MAX_LENGTH if model_name != "Logistic Regression" else None}
 
 
-@lru_cache(maxsize=1)
-def load_logistic_regression():
-    """
-    Load and cache the Logistic Regression model
-    and TF-IDF vectorizer.
-    """
-
-    if not BASELINE_MODEL_PATH.is_file():
-        raise FileNotFoundError(
-            "Logistic Regression model was not found: "
-            f"{BASELINE_MODEL_PATH}. "
-            "Add models/baseline_model.pkl to the GitHub "
-            "repository used by Streamlit."
-        )
-
-    if not TFIDF_VECTORIZER_PATH.is_file():
-        raise FileNotFoundError(
-            "TF-IDF vectorizer was not found: "
-            f"{TFIDF_VECTORIZER_PATH}. "
-            "Add models/tfidf_vectorizer.pkl to the GitHub "
-            "repository used by Streamlit."
-        )
-
-    print("Loading Logistic Regression model...")
-
-    with open(BASELINE_MODEL_PATH, "rb") as file:
-        logistic_model = pickle.load(file)
-
-    with open(TFIDF_VECTORIZER_PATH, "rb") as file:
-        tfidf_vectorizer = pickle.load(file)
-
-    print("Logistic Regression loaded successfully.")
-
-    return logistic_model, tfidf_vectorizer
-
-
-# ============================================================
-# VADER sentiment analyzer
-# ============================================================
-
-def _normalize_text(text):
-    return " ".join(str(text).split()) if text is not None else ""
-
-
-def predict_sentiment(text):
-    """
-    Analyze the emotional tone of the input using VADER.
-
-    Sentiment is independent from the fake-news category.
-    """
-
-    clean_text = _normalize_text(text)
-
-    if not clean_text:
-        raise ValueError(
-            "Input text cannot be empty."
-        )
-
-    scores = sentiment_analyzer.polarity_scores(
-        clean_text
-    )
-
-    compound = float(scores["compound"])
-
-    if compound >= 0.05:
-        sentiment_label = "Positive"
-    elif compound <= -0.05:
-        sentiment_label = "Negative"
+@lru_cache(maxsize=3)
+def _load_classifier(model_name, signature):
+    metadata = get_model_metadata(model_name)
+    path = MODEL_PATHS[model_name]
+    if model_name == "Logistic Regression":
+        import joblib
+        model = joblib.load(path / "pipeline.joblib")
+        if set(map(int, model.classes_)) != set(metadata["internal_labels"]):
+            raise ValueError("Baseline classes disagree with the final mapping")
+        resources = (None, model)
+        weights_path = path / "pipeline.joblib"
     else:
         import torch
         from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -348,58 +244,7 @@ if __name__ == "__main__":
         if text.strip().lower() == "exit":
             break
         try:
-            results = predict_text(text)
-            sentiment = predict_sentiment(text)
-
-            print("\nMODEL COMPARISON")
-            print("=" * 70)
-
-            for model_name, result in results.items():
-                print(f"\n{model_name}")
-                print("-" * 40)
-
-                print(
-                    "Prediction:",
-                    result["predicted_label"],
-                )
-
-                print(
-                    "Confidence:",
-                    f"{result['confidence'] * 100:.2f}%",
-                )
-
-                if "number_of_chunks" in result:
-                    print(
-                        "Chunks analyzed:",
-                        result["number_of_chunks"],
-                    )
-
-                print("\nClass probabilities:")
-
-                for label, probability in (
-                    result[
-                        "probability_by_label"
-                    ].items()
-                ):
-                    print(
-                        f"  {label}: "
-                        f"{probability * 100:.2f}%"
-                    )
-
-            print("\nSENTIMENT")
-            print("-" * 40)
-
-            print(
-                "Label:",
-                sentiment["sentiment_label"],
-            )
-
-            print(
-                "Compound:",
-                sentiment["compound"],
-            )
-
-            print("\n" + "=" * 70)
-
-        except Exception as error:
-            print("Error:", error)
+            print(json.dumps(predict_text(text), indent=2))
+            print("VADER sentiment:", json.dumps(predict_sentiment(text)))
+        except (ValueError, OSError) as error:
+            print("Analysis could not be completed:", error)
