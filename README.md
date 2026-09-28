@@ -1,122 +1,131 @@
-# TruthLens AI
+# Fake News & Content Classification System
 
-TruthLens AI is a final engineering project for six-class fake-news and misinformation classification using the Fakeddit dataset.
+**Six-Category Text Classification and Sentiment Analysis**
 
-## Overview
+The final university-project dashboard compares **BERT**, **corrected DistilBERT**, and **TF-IDF + Logistic Regression** on the same input. **VADER** analyzes emotional tone separately. All application inference is local; no API, downloads or training occur when running the app.
 
-The final active system compares three models on the same input text:
+## Partner setup after cloning or pulling
 
-1. BERT
-2. DistilBERT
-3. TF-IDF + Logistic Regression
+Use **Python 3.13**, matching the tested environment. Open PowerShell in the repository root. After cloning your shared repository (or running `git pull` in an existing checkout):
 
-The same text is also analyzed independently with VADER for sentiment, not for fake-news classification.
-
-It is designed for the six Fakeddit labels:
-
-- True
-- Satire
-- False Connection
-- Imposter Content
-- Manipulated Content
-- Misleading Content
-
-## Architecture
-
-Input text
-    |
-    +--> BERT ----------------------> classification
-    +--> DistilBERT ----------------> classification
-    +--> TF-IDF + Logistic Regression -> classification
-    |
-    +--> VADER ---------------------> sentiment analysis
-
-## Model comparison
-
-The project stores controlled evaluation results for the three final fake-news classifiers in the project results folder.
-
-VADER is not included in the model-comparison accuracy table because it is a separate sentiment analysis component, not a fake-news classifier.
-
-Current reported metrics for the final classification comparison are:
-
-- TF-IDF + Logistic Regression: Accuracy 0.6196, Precision 0.7094, Recall 0.6196, F1 0.6467
-- DistilBERT: Accuracy 0.7276, Precision 0.7165, Recall 0.7276, F1 0.7183
-- BERT: Accuracy 0.7410, Precision 0.7317, Recall 0.7410, F1 0.7329
-
-These are the final comparison results used in the application and should not be replaced with unsupported claims.
-
-## Long-text handling and chunking
-
-The BERT and DistilBERT models are run on long input using token-based chunking instead of character splitting.
-
-Implementation details:
-
-- The Transformer models use a 128-token max sequence length.
-- Chunks are generated using the tokenizer directly, not raw string splitting.
-- Special tokens are accounted for by leaving room inside the 128-token limit.
-- A small overlap is used between adjacent chunks to preserve context at boundaries.
-- Each chunk is classified independently.
-- Final document-level probabilities are created by averaging the chunk-level class probabilities.
-- Short text remains a single chunk.
-
-This preserves the trained model configuration while allowing the system to process long headlines or articles.
-
-## Project structure
-
-- app/app.py — Streamlit application
-- src/predict.py — final active prediction interface for all three models
-- src/baseline.py — TF-IDF + Logistic Regression training/evaluation
-- src/train_bert.py — BERT training experiment
-- src/train_distilbert.py — DistilBERT training experiment
-- src/compare_models.py — final comparison script for the three active project models
-- models/ — trained model files and vectorizer
-- results/ — evaluation metrics and comparison outputs
-- data/ — Fakeddit train/validate/test files
-
-## Installation
-
-Create a virtual environment and install requirements:
-
-```bash
-python -m venv .venv
-. .venv/bin/activate   # Linux/macOS
-.venv\Scripts\activate # Windows
-pip install -r requirements.txt
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## Running the app
+The requirements pin the tested package versions, including scikit-learn/joblib compatibility with the saved LR pipeline. Package installation requires internet access; subsequent inference is offline. A CPU is sufficient. The complete models need about 710 MB of artifact storage, plus several GB for Python dependencies and working RAM.
 
-From the project root:
+**A Git clone alone does not include the two Transformer weight files. Complete the next step before Analyze or model-dependent tests. Do not retrain.**
 
-```bash
-streamlit run app/app.py
+## Obtain the exact final model weights
+
+| Model artifact | Exact bytes | MiB | Delivery |
+|---|---:|---:|---|
+| BERT `model.safetensors` | 437,970,928 | 417.68 | Separate handoff archive |
+| Corrected DistilBERT `model.safetensors` | 267,844,872 | 255.44 | Separate handoff archive |
+| LR `pipeline.joblib` | 1,255,900 | 1.20 | Included in Git |
+
+GitHub blocks files larger than **100 MiB** in ordinary Git. Git LFS or release assets are alternatives; this handoff uses a separate archive so no LFS account/quota is required. [GitHub file-limit documentation](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github).
+
+**Project owner:** the ready-to-share archive is `handoff/final-transformer-weights.zip` (705,816,208 bytes). It contains only the two exact evaluated weight files, with their destination directories. Send it directly to your partner using your shared storage/USB/file-transfer method. Alternatively, attach it to a GitHub Release after separately approving publication. Nothing has been uploaded, and there is no hosted download URL yet. The archive and original local models are preserved and ignored by Git.
+
+**Project partner:** obtain that archive from the project owner, then extract it into the cloned repository root:
+
+```powershell
+Expand-Archive -LiteralPath "$env:USERPROFILE\Downloads\final-transformer-weights.zip" -DestinationPath .
+.\.venv\Scripts\python.exe -B src/verify_artifacts.py
 ```
 
-The app reads the same user input and runs:
+For an existing checkout, inspect any existing weights before replacing them; `Expand-Archive` deliberately does not overwrite files by default. You can instead copy the two weight files manually into the directories below. Do not use the old Fakeddit models or uncorrected DistilBERT.
 
-- BERT
-- DistilBERT
-- TF-IDF + Logistic Regression
+```text
+models/
+  artifact_manifest.json
+  bert_six_category_final/
+    model.safetensors          # obtained separately
+    config.json
+    experiment.json
+    label_mapping.json
+    tokenizer.json
+    tokenizer_config.json
+  distilbert_six_category_native_ads_corrected/
+    model.safetensors          # obtained separately
+    config.json
+    label_mapping.json
+    tokenizer.json
+    tokenizer_config.json
+  logistic_regression_six_category_final/
+    pipeline.joblib
+    experiment.json
+    label_mapping.json
+```
 
-It then separately runs VADER sentiment analysis on the same input and displays the sentiment output independently from the fake-news classification results.
+Everything above except the two weight files is included in the proposed Git changes. `verify_artifacts.py` checks all file sizes and SHA-256 hashes against `models/artifact_manifest.json`, without importing ML libraries. Load the joblib artifact only from this trusted project handoff.
 
-## Model files and outputs
+## Run the final app
 
-Expected active artifacts:
+```powershell
+.\.venv\Scripts\python.exe -B -m streamlit run app/app.py --server.address 127.0.0.1 --server.port 8501 --server.headless true --browser.gatherUsageStats false
+```
 
-- models/bert/
-- models/distilbert/
-- models/baseline_model.pkl
-- models/tfidf_vectorizer.pkl
-- results/baseline_metrics.csv
-- results/distilbert_metrics.csv
-- results/BERT_metrics.csv
-- results/model_comparison.csv
+Open **http://127.0.0.1:8501**. Paste text, select **Analyze**, and review the three predictions, agreement, probability tabs, and VADER. **Clear** resets input/results; editing input removes stale results. Stop and restart Streamlit after changing Python inference code. Missing/mismatched models produce an error rather than silently using legacy models.
 
-Legacy or research artifacts for earlier experiments or sentiment fusion remain in the repository for traceability but are not part of the final active application.
+Final labels, ordered by project ID:
 
-## Notes
+1. Native Advertising
+2. News Satire
+3. Propaganda
+4. Manipulation
+5. News Parody
+6. Fabrication
 
-- VADER is used as a separate sentiment-analysis component and is not part of the fake-news classification stack.
-- Confidence values are model probabilities and should not be treated as independent fact verification.
-- The final active fake-news classification stack is BERT, DistilBERT, and TF-IDF + Logistic Regression only.
+Saved label mappings translate internal IDs 0–5 to project IDs 1–6. Short Transformer input uses direct evaluation-mode inference. Longer input uses complete 512-token windows including special tokens, 16-token overlap, and arithmetic-mean window probabilities. LR processes full text; VADER is independent. Input limit: 50,000 characters. Pasted app text is not saved to disk.
+
+## Dataset, metrics and provenance
+
+The **final** 8,459-record dataset is included at `data/processed/final_six_category_dataset.csv` (4,400,900 bytes), together with the original construction report. The later correction is documented in `results/distilbert_six_category_native_ads_corrected/correction_report.md`. This is the frozen corrected dataset, not an intermediate/raw dataset. It supports the split/integrity tests and final comparison; it is not needed for ordinary app inference. All three models share exactly **5,921 train / 1,269 validation / 1,269 test** rows.
+
+| Model | Test accuracy | Test macro F1 |
+|---|---:|---:|
+| BERT | 97.48% | 97.42% |
+| Corrected DistilBERT | 97.87% | 97.77% |
+| TF-IDF + Logistic Regression | 84.16% | 82.80% |
+
+Final evaluation reports, per-class results, confusion matrices, row-level predictions, split manifests, label mappings and training plans are included under the three final `results/<model>/` directories. `results/final_model_comparison/` contains the shared comparison and evaluated-weight registry. Historical absolute paths inside experiment records document the original run; application paths are resolved relative to the clone.
+
+The old pre-correction manifest/plan and annotation provenance are retained to explain the correction. Existing tracked top-level legacy metrics and legacy training scripts are historical work, not the final comparison. Do not run training/preprocessing scripts to set up the application. The optional historical API-labeling pilot is also not part of the app or its required dependencies.
+
+See [the final system report](results/final_system_audit/final_report.md) for the model audit, checkpoint-export repair, metrics and limitations, and [the Git review](docs/GIT_REVIEW.md) for what is included/excluded. `.gitattributes` preserves exact artifact bytes across checkouts so line-ending conversion does not invalidate hashes.
+
+## Offline verification
+
+After installing dependencies and obtaining the two weights:
+
+```powershell
+.\.venv\Scripts\python.exe -B src/verify_artifacts.py
+.\.venv\Scripts\python.exe -B -m unittest discover -s tests -v
+```
+
+Tests cover all classifiers, mappings, direct/module/Streamlit parity, chunk coverage, Analyze/Clear, agreement and independent VADER. The raw Native-Ads traceability audit skips when intentionally excluded raw source/backup files are absent. All other tests work with the handoff; no original Hugging Face cache or training checkpoints are needed.
+
+Optional diagnostic commands (write refreshed local evaluation outputs; never train):
+
+```powershell
+.\.venv\Scripts\python.exe -B src/audit_final_parity.py
+.\.venv\Scripts\python.exe -B src/final_test.py
+```
+
+TravelPro reproduces **Native Advertising — 0.6786684393882751** across direct corrected DistilBERT, `src/predict.py`, and Streamlit. The 12 fixed probes match 10/12 intended categories for BERT/DistilBERT and 6/12 for LR; these probes are not an independent accuracy benchmark.
+
+## Intentionally excluded from Git
+
+- Raw datasets, intermediate merged data, and the pre-correction CSV backup.
+- Transformer weights and the local handoff archive (shared separately as above).
+- Training checkpoints, optimizer/RNG states and training-argument binaries.
+- Training/runtime logs, caches, virtual environments and local secret files.
+- Duplicate model-repair exports, superseded evaluation outputs and transient audit diagnostics.
+
+Ignore rules do not delete these files locally. Required application/source/test files, final model metadata/tokenizers, LR, final dataset and final evaluation evidence remain eligible for Git.
+
+Model confidence and agreement do not verify factual truth. Source/heuristic labels, source/style cues, overlapping satire/parody concepts and fewer Fabrication records limit generalization. Earlier test/sanity results informed the Native Advertising correction, so the recorded scores are regression evaluation rather than an untouched independent test. Long-document averaging is not a separately validated document-level benchmark.
