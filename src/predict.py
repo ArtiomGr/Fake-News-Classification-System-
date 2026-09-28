@@ -1,4 +1,8 @@
-"""Final three-model inference. All resources are local and task-validated."""
+"""Local six-category classifier inference shared by the app and decision layer.
+
+Classifier resources load lazily under one lock. Final decision-layer selection
+belongs to final_decision; the sentiment helper remains a separate API.
+"""
 from functools import lru_cache
 import json
 import os
@@ -21,13 +25,25 @@ MAX_INPUT_CHARACTERS = 50_000
 _INFERENCE_LOCK = RLock()
 
 
+def _required_artifacts(model_name):
+    if model_name not in MODEL_PATHS:
+        raise ValueError("Unknown final classifier")
+    if model_name == "Logistic Regression":
+        return ("pipeline.joblib", "experiment.json", "label_mapping.json")
+    files = ("model.safetensors", "config.json", "tokenizer.json",
+             "tokenizer_config.json", "label_mapping.json")
+    return files + (("experiment.json",) if model_name == "BERT" else ())
+
+
 def artifact_fingerprint():
     """Cache identity includes exact paths and artifact versions, not just a name."""
     signature = []
     for name, path in MODEL_PATHS.items():
-        for filename in ("config.json", "model.safetensors", "tokenizer.json", "tokenizer_config.json",
-                         "label_mapping.json", "pipeline.joblib", "experiment.json"):
-            file = path / filename
+        # Include shared validation inputs under each model's name so callers
+        # filtering the signature still invalidate that model and its results.
+        files = [path / filename for filename in _required_artifacts(name)]
+        files.append(DISTIL_RESULTS / "training_plan.json")
+        for file in files:
             stat = file.stat() if file.is_file() else None
             signature.append((name, str(file.resolve()), stat.st_mtime_ns if stat else None, stat.st_size if stat else None))
     registry = ROOT / "results/final_model_comparison/model_registry.json"
@@ -37,9 +53,8 @@ def artifact_fingerprint():
 
 
 def get_model_metadata(model_name="DistilBERT"):
+    required = _required_artifacts(model_name)
     path = MODEL_PATHS[model_name]
-    required = ["pipeline.joblib", "experiment.json", "label_mapping.json"] if model_name == "Logistic Regression" else [
-        "model.safetensors", "config.json", "tokenizer.json", "tokenizer_config.json", "label_mapping.json"]
     missing = [name for name in required if not (path / name).is_file()]
     if missing:
         raise FileNotFoundError(f"Final local {model_name} model is incomplete at {path}: {', '.join(missing)}")
@@ -104,6 +119,7 @@ def _load_classifier(model_name, signature):
 
 
 def _resources(model_name):
+    _required_artifacts(model_name)
     signature = tuple(item for item in artifact_fingerprint() if item[0] in (model_name, "registry"))
     return _load_classifier(model_name, signature)
 
@@ -163,7 +179,6 @@ def aggregate_chunk_probabilities(chunk_probabilities):
         raise ValueError("At least one chunk is required for aggregation")
     probabilities = np.mean(np.stack(chunk_probabilities), axis=0)
     return probabilities / probabilities.sum()
-
 
 
 def predict_model(text, model_name="DistilBERT"):
