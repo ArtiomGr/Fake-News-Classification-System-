@@ -259,7 +259,58 @@ if __name__ == "__main__":
         if text.strip().lower() == "exit":
             break
         try:
-            print(json.dumps(predict_text(text), indent=2))
-            print("VADER sentiment:", json.dumps(predict_sentiment(text)))
-        except (ValueError, OSError) as error:
-            print("Analysis could not be completed:", error)
+            results = predict_text(text)
+            sentiment = predict_sentiment(text)
+
+            print("\nMODEL COMPARISON")
+            print("=" * 70)
+
+            for model_name, result in results.items():
+                print(f"\n{model_name}")
+                print("-" * 40)
+
+                print(
+                    "Prediction:",
+                    result["predicted_label"],
+                )
+
+                print(
+                    "Confidence:",
+                    f"{result['confidence'] * 100:.2f}%",
+                )
+
+                if "number_of_chunks" in result:
+                    print(
+                        "Chunks analyzed:",
+                        result["number_of_chunks"],
+                    )
+
+                print("\nClass probabilities:")
+
+                for label, probability in (
+                    result[
+                        "probability_by_label"
+                    ].items()
+                ):
+                    print(
+                        f"  {label}: "
+                        f"{probability * 100:.2f}%"
+                    )
+
+            print("\nSENTIMENT")
+            print("-" * 40)
+
+            print(
+                "Label:",
+                sentiment["sentiment_label"],
+            )
+
+            print(
+                "Compound:",
+                sentiment["compound"],
+            )
+
+            print("\n" + "=" * 70)
+
+        except Exception as error:
+            print("Error:", error)
