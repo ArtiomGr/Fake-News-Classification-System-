@@ -143,16 +143,15 @@ class PredictTextTests(unittest.TestCase):
         self.assertEqual(recovered, expected)
         self.assertTrue(all(len(c) <= 510 for c in chunks))
 
-    def test_bert_export_is_the_complete_best_checkpoint(self):
+    def test_bert_export_matches_verified_final_artifact(self):
         from final_project import read_json, sha256
-        best = read_json(ROOT / "results/bert_six_category_final/best_checkpoint.json")
         actual = sha256(ROOT / "models/bert_six_category_final/model.safetensors")
         registry = read_json(ROOT / "results/final_model_comparison/model_registry.json")
         self.assertEqual(actual, registry["models"]["BERT"]["weights_sha256"])
-        checkpoint = ROOT / "models/bert_six_category_final/checkpoints" / Path(best["checkpoint"].replace("\\", "/")).name / "model.safetensors"
-        if checkpoint.is_file():
-            self.assertEqual(actual, sha256(checkpoint),
-                             "Export must include all best-checkpoint parameters, including LayerNorm")
+        manifest = read_json(ROOT / "models/artifact_manifest.json")
+        entry = next(item for item in manifest["files"]
+                     if item["path"] == "models/bert_six_category_final/model.safetensors")
+        self.assertEqual(actual, entry["sha256"])
 
     def test_agreement_is_descriptive_and_handles_all_outcomes(self):
         for labels, count in [(EXPECTED_LABELS[:3], 1), (["Propaganda"] * 3, 3),

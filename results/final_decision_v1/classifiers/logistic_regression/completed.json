@@ -1,0 +1,42 @@
+{
+  "seconds": 0.237232400017092,
+  "records": 8459,
+  "device": "cpu",
+  "max_token_length": null,
+  "runtime_parity": [
+    {
+      "dataset_row": 0,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "dataset_row": 1,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "dataset_row": 6,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "dataset_row": 42,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "dataset_row": 100,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "dataset_row": 1000,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "dataset_row": 4000,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "dataset_row": 8458,
+      "max_absolute_probability_difference": 0.0
+    }
+  ],
+  "probabilities_sha256": "ab60a2e3e9195adb5e3c239d1844f9c91a13ad2a292b12eebb529346ec68ae66",
+  "historical_validation_test_predictions_match": true
+}

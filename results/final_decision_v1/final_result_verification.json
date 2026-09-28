@@ -1,0 +1,33 @@
+{
+  "all_passed": true,
+  "confusion_matrices_verified": [
+    "classifiers/bert/train_confusion_matrix.csv",
+    "classifiers/bert/validation_confusion_matrix.csv",
+    "classifiers/bert/test_confusion_matrix.csv",
+    "classifiers/distilbert/train_confusion_matrix.csv",
+    "classifiers/distilbert/validation_confusion_matrix.csv",
+    "classifiers/distilbert/test_confusion_matrix.csv",
+    "classifiers/logistic_regression/train_confusion_matrix.csv",
+    "classifiers/logistic_regression/validation_confusion_matrix.csv",
+    "classifiers/logistic_regression/test_confusion_matrix.csv",
+    "fusion/classifier_alone/validation_nested_oof_confusion_matrix.csv",
+    "fusion/classifier_alone/train_confusion_matrix.csv",
+    "fusion/classifier_alone/validation_confusion_matrix.csv",
+    "fusion/classifier_alone/test_confusion_matrix.csv",
+    "fusion/probability_only/validation_nested_oof_confusion_matrix.csv",
+    "fusion/probability_only/train_confusion_matrix.csv",
+    "fusion/probability_only/validation_confusion_matrix.csv",
+    "fusion/probability_only/test_confusion_matrix.csv",
+    "fusion/vader_fusion/validation_nested_oof_confusion_matrix.csv",
+    "fusion/vader_fusion/train_confusion_matrix.csv",
+    "fusion/vader_fusion/validation_confusion_matrix.csv",
+    "fusion/vader_fusion/test_confusion_matrix.csv"
+  ],
+  "classifier_probability_hashes_verified": 3,
+  "decision_artifact_hashes_verified": 2,
+  "deployment_hash_verified": true,
+  "fusion_feature_hash_verified": true,
+  "warm_measurements": 120,
+  "cold_measurements": 3,
+  "edge_cases": 14
+}

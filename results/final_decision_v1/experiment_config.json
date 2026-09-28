@@ -1,0 +1,113 @@
+{
+  "created_utc": "2026-09-27T07:18:21.155756+00:00",
+  "experiment": "final_decision_v1",
+  "dataset_sha256": "a44b118d36942a151b99c8907ef613f98a0ad34bc566d22f3419c2ee41a54842",
+  "split_manifest_sha256": "5149b198301db87d72ec016b803da03683f99ec9b1e3bb449295fc0cd37d5e94",
+  "label_mapping": {
+    "project_id_to_category": {
+      "1": "Native Advertising",
+      "2": "News Satire",
+      "3": "Propaganda",
+      "4": "Manipulation",
+      "5": "News Parody",
+      "6": "Fabrication"
+    },
+    "internal_id_to_category": {
+      "0": "Native Advertising",
+      "1": "News Satire",
+      "2": "Propaganda",
+      "3": "Manipulation",
+      "4": "News Parody",
+      "5": "Fabrication"
+    },
+    "category_to_internal_id": {
+      "Native Advertising": 0,
+      "News Satire": 1,
+      "Propaganda": 2,
+      "Manipulation": 3,
+      "News Parody": 4,
+      "Fabrication": 5
+    },
+    "internal_id_to_project_id": {
+      "0": 1,
+      "1": 2,
+      "2": 3,
+      "3": 4,
+      "4": 5,
+      "5": 6
+    }
+  },
+  "split_counts": {
+    "train": 5921,
+    "validation": 1269,
+    "test": 1269
+  },
+  "classifier_selection": "Highest saved validation macro F1; exact tie follows BERT, DistilBERT, Logistic Regression order. Test never selects.",
+  "decision_selection": "Highest nested validation OOF macro F1 among A/B/C; exact ties prefer A then B then C. C must exceed both A and B.",
+  "development": "Only existing validation partition; nested StratifiedGroupKFold (outer 5, inner 4), random_state=42. Inner seed=42+outer_fold. Final refit C chosen by grouped 5-fold CV on validation.",
+  "regularization_C_grid": [
+    0.01,
+    0.1,
+    1.0,
+    10.0,
+    100.0
+  ],
+  "tuning_metric": "mean fold macro F1",
+  "tuning_tie_break": "smaller C",
+  "estimator": "StandardScaler then multinomial LogisticRegression, L2, lbfgs, max_iter=3000, tol=1e-8, no class weights",
+  "feature_order": {
+    "probability_only": [
+      "p_1_native_advertising",
+      "p_2_news_satire",
+      "p_3_propaganda",
+      "p_4_manipulation",
+      "p_5_news_parody",
+      "p_6_fabrication"
+    ],
+    "vader_fusion": [
+      "p_1_native_advertising",
+      "p_2_news_satire",
+      "p_3_propaganda",
+      "p_4_manipulation",
+      "p_5_news_parody",
+      "p_6_fabrication",
+      "vader_neg",
+      "vader_neu",
+      "vader_pos",
+      "vader_compound"
+    ]
+  },
+  "seed": 42,
+  "outer_folds": 5,
+  "inner_folds": 4,
+  "inference": "Whitespace normalization; float32 Transformers in eval/inference mode; 512 tokens, no token_type_ids, dynamic padding batch=16; assert dataset has no >512-token records. Runtime long text retains 16-token overlap and mean window probabilities. LR full normalized text.",
+  "torch_cpu_threads": 4,
+  "brier_definition": "mean over rows of sum over six classes (p - one_hot(y))^2; range 0..2",
+  "uncertainty": "2000 paired cluster bootstrap resamples of related group IDs; percentile 95% intervals, seed 42; conditional on fitted models, not retraining uncertainty",
+  "vader_measurable_improvement_rule": "C exceeds A and B in test macro F1 and both paired 95% cluster-bootstrap macro-F1 difference intervals exclude zero; development selection remains fixed regardless.",
+  "numeric_product_acceptance_targets": null,
+  "acceptance_note": "No accuracy or response-time thresholds supplied; report measurements without inventing pass/fail targets.",
+  "limitations": [
+    "Validation records influenced frozen classifier checkpoint selection; nested decision-layer CV does not undo this dependence.",
+    "Earlier test/probe results informed Native Advertising dataset correction; test is locked regression evidence, not untouched independent evidence.",
+    "Source-supervised/heuristic labels and source/style correlations limit generalization; sources are not held out wholesale.",
+    "Known groups are separated; undetected semantic overlap may remain.",
+    "Only 144 validation and 144 test Fabrication examples; small differences can be unstable.",
+    "Final decision layers fit validation only. Their train-partition scores are diagnostics on base-classifier training data, not generalization estimates.",
+    "Final-fit validation scores are resubstitution; nested out-of-fold scores are the decision development comparison.",
+    "No independent long-document accuracy benchmark; runtime uses existing overlapping-window mean probabilities.",
+    "Probabilities are assessed for calibration but are not factual verification or guaranteed calibrated confidence."
+  ],
+  "versions": {
+    "torch": "2.13.0",
+    "transformers": "5.15.0",
+    "scikit-learn": "1.9.0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "vaderSentiment": "3.3.2",
+    "joblib": "1.5.3",
+    "matplotlib": "3.11.1"
+  },
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.13.15"
+}

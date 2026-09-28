@@ -1,0 +1,7 @@
+{
+  "test_process_exit_code": 0,
+  "test_suite_successful": true,
+  "shutdown_warning": "After all 56 tests passed, a Python weakref/tempfile finalizer reported PermissionError while cleaning a temporary directory outside the project. This did not fail any test or change the zero process exit code.",
+  "classifier_evaluation": "All three full classifier evaluations were already complete on disk at continuation. Hashes, row provenance, all metrics and historical validation/test hard predictions were verified from saved outputs. No full classifier inference was rerun.",
+  "prior_state": "tests/test_predict.py was already modified, and the final decision source files and experiment results already existed when this continuation began. Models-Artiom-Clean/ and Models-Artiom.zip were pre-existing untracked inputs, not created by this continuation."
+}

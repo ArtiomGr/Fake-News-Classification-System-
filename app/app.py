@@ -1,4 +1,6 @@
-"""University defense dashboard for the final, locally trained comparison."""
+"""USER inference and ADMIN presentation of the frozen Phase 1–5 evidence."""
+import json
+import logging
 import sys
 from pathlib import Path
 
@@ -6,214 +8,322 @@ import pandas as pd
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT / "src") not in sys.path:
-    sys.path.insert(0, str(ROOT / "src"))
+if str(ROOT / 'src') not in sys.path:
+    sys.path.insert(0, str(ROOT / 'src'))
+import final_decision
+from predict import MAX_INPUT_CHARACTERS, artifact_fingerprint
 
-from final_project import CATEGORIES, RESULT_PATHS
-from predict import (
-    MODEL_NAMES, MAX_INPUT_CHARACTERS, TRANSFORMER_MAX_LENGTH, CHUNK_OVERLAP_TOKENS,
-    artifact_fingerprint, get_model_metadata, load_classifier, model_agreement,
-    predict_sentiment, predict_text,
-)
+EVIDENCE = ROOT / 'results/final_decision_v1'
+APP_NAME = 'Fake News & Content Classification System'
+SYSTEM_NAMES = {
+    'classifier_alone': 'A · DistilBERT alone',
+    'probability_only': 'B · Probability-only Decision Layer',
+    'vader_fusion': 'C · DistilBERT + VADER Fusion',
+}
+MODEL_SLUGS = {'BERT': 'bert', 'DistilBERT': 'distilbert', 'Logistic Regression': 'logistic_regression'}
+SPLIT_NAMES = {'train': 'TRAIN', 'validation': 'Validation', 'test': 'Test',
+               'validation_nested_oof': 'Validation · nested OOF'}
 
-APP_NAME = "Fake News & Content Classification System"
-st.set_page_config(page_title=APP_NAME, page_icon="🔎", layout="wide", initial_sidebar_state="collapsed")
-st.markdown("""
+st.set_page_config(page_title=APP_NAME, page_icon='◈', layout='wide', initial_sidebar_state='collapsed')
+st.markdown('''
 <style>
-:root { --navy:#0b1739; --blue:#315efb; --cyan:#19b8d4; --violet:#7557e8; --ink:#13213c; --muted:#66758d; --panel:#ffffff; --line:#dce4ef; }
-.stApp { background: radial-gradient(circle at 85% 5%, #e8eeff 0, transparent 25%), #f5f7fb; color: var(--ink); }
-.block-container { max-width: 1380px; padding-top: 1.15rem; padding-bottom: 2.5rem; }
-[data-testid="stHeader"] { background: transparent; }
-[data-testid="stSidebar"] { background: #0b1739; }
-[data-testid="stSidebar"] * { color: #eef4ff !important; }
-h1,h2,h3 { color: var(--ink); letter-spacing:-.025em; }
-h2 { margin-top:.8rem !important; }
-.hero { background: linear-gradient(120deg,#0b1739 0%,#172d65 58%,#314ec9 100%); border-radius:24px; padding:30px 34px; color:white; box-shadow:0 18px 45px rgba(26,50,105,.18); margin-bottom:18px; }
-.hero .eyebrow { font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; opacity:.78; font-weight:700; }
-.hero h1 { color:white !important; font-size:clamp(2rem,4vw,3.25rem) !important; margin:.25rem 0 .35rem; }
-.hero p { margin:0; color:#dce6ff; font-size:1.05rem; max-width:850px; }
-.model-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0 22px; }
-.model-chip { background:white; border:1px solid var(--line); border-radius:16px; padding:15px 17px; box-shadow:0 7px 20px rgba(31,48,84,.06); }
-.model-chip b { display:block; color:var(--ink); font-size:1.02rem; }
-.model-chip span { color:var(--muted); font-size:.82rem; }
-.model-chip strong { float:right; color:#315efb; font-size:.95rem; }
-.section-kicker { color:#315efb; font-weight:800; font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:-.25rem; }
-.input-shell { background:white; border:1px solid var(--line); border-radius:20px; padding:8px 14px 14px; box-shadow:0 10px 28px rgba(31,48,84,.07); }
-.stTextArea textarea { border-radius:14px !important; background:#fbfcff !important; border:1px solid #d9e2f0 !important; font-size:1rem !important; }
-.stButton button { border-radius:12px !important; font-weight:700 !important; min-height:44px; }
-.stButton button[kind="primary"] { background:linear-gradient(90deg,#315efb,#6048e8) !important; border:0 !important; color:white !important; box-shadow:0 8px 18px rgba(49,94,251,.2); }
-[data-testid="stVerticalBlockBorderWrapper"] { background:white; border:1px solid var(--line); border-radius:18px; box-shadow:0 8px 24px rgba(31,48,84,.06); }
-[data-testid="stMetricLabel"] { color:var(--muted); font-weight:600; }
-[data-testid="stMetricValue"] { color:var(--ink); font-weight:800; }
-[data-baseweb="tab-list"] { gap:8px; }
-button[data-baseweb="tab"] { font-weight:700; border-radius:10px; }
-[data-testid="stAlert"] { border-radius:14px; }
-[data-testid="stDataFrame"] { border-radius:12px; overflow:hidden; }
-.project-footer { color:#77859a; font-size:.8rem; border-top:1px solid var(--line); padding-top:1rem; margin-top:1.5rem; text-align:center; }
-@media(max-width:900px){ .model-strip{grid-template-columns:repeat(2,1fr)} .hero{padding:24px} }
-@media(max-width:600px){ .model-strip{grid-template-columns:1fr} .block-container{padding:1rem} }
+.stApp { background:#f5f7fb; }
+.block-container { max-width:1320px; padding-top:2rem; padding-bottom:3rem; }
+[data-testid="stHeader"] { background:transparent; }
+h1,h2,h3 { color:#162640; letter-spacing:-.025em; }
+.hero { background:linear-gradient(115deg,#142641,#233d64); padding:32px 36px;
+        border-radius:20px; margin:12px 0 24px; color:#fff; }
+.hero h1 { color:#fff; font-size:clamp(1.8rem,3.5vw,2.65rem); margin:6px 0 10px; }
+.hero p { color:#dce6f5; max-width:780px; margin:0; line-height:1.6; }
+.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#a6c9ff; }
+.stButton button,.stDownloadButton button { border-radius:10px; min-height:44px; }
+.stTextArea textarea { border-radius:12px; font-size:1rem; }
+[data-testid="stMetricValue"] { color:#183b67; }
+[data-testid="stMetricLabel"] { color:#52647c; }
+[data-testid="stVerticalBlockBorderWrapper"] { border-radius:16px; }
+button[data-baseweb="tab"] { font-weight:600; }
+.flow { display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; margin:18px 0; }
+.flow-step { flex:1; min-width:160px; background:#fff; border:1px solid #d7e1ed;
+             border-top:3px solid #3877bc; border-radius:12px; padding:18px; color:#162640; }
+.flow-step small { display:block; color:#60728a; margin-top:7px; line-height:1.5; }
+.footer { color:#63758d; font-size:.8rem; border-top:1px solid #dce4ef; margin-top:30px; padding-top:16px; }
+@media(max-width:650px) { .hero { padding:24px; } .block-container { padding:1rem; } }
 </style>
-""", unsafe_allow_html=True)
+''', unsafe_allow_html=True)
 
-st.markdown("""
-<div class="hero">
-  <div class="eyebrow">University Final Project · NLP & Machine Learning</div>
-  <h1>Fake News & Content Classification System</h1>
-  <p>Multi-model analysis across six content categories using BERT, DistilBERT and TF-IDF + Logistic Regression, with independent VADER sentiment analysis.</p>
-</div>
-<div class="model-strip">
-  <div class="model-chip"><strong>97.48%</strong><b>BERT</b><span>Transformer · Test accuracy</span></div>
-  <div class="model-chip"><strong>97.87%</strong><b>DistilBERT</b><span>Transformer · Test accuracy</span></div>
-  <div class="model-chip"><strong>84.16%</strong><b>Logistic Regression</b><span>TF-IDF baseline · Test accuracy</span></div>
-  <div class="model-chip"><strong>Sentiment</strong><b>VADER</b><span>Independent emotional-tone analysis</span></div>
-</div>
-""", unsafe_allow_html=True)
 
-LABELS = list(CATEGORIES.values())
-signature = artifact_fingerprint()
+def read_json(name):
+    return json.loads((EVIDENCE / name).read_text(encoding='utf-8'))
 
-with st.sidebar:
-    st.markdown("### Project categories")
-    for project_id, label in CATEGORIES.items():
-        st.caption(f"{project_id}. {label}")
-    st.divider()
-    st.caption("Three classifiers · one frozen dataset\n\nVADER provides separate sentiment analysis.\n\nLocal inference · no external API")
 
-@st.cache_resource(show_spinner=False)
-def cached_classifiers(artifact_version):
-    """Streamlit caches resources by the actual saved-artifact version."""
-    return {name: load_classifier(name) for name in MODEL_NAMES}
+def read_csv(name):
+    return pd.read_csv(EVIDENCE / name)
+
+
+def figure(name, caption):
+    st.image(str(EVIDENCE / name), caption=caption, width='stretch')
+
+
+def metrics_table(frame):
+    frame = frame.copy()
+    if 'system' in frame:
+        frame['system'] = frame['system'].map(SYSTEM_NAMES)
+    if 'split' in frame:
+        frame['split'] = frame['split'].map(SPLIT_NAMES)
+    for key in ('accuracy', 'macro_f1', 'weighted_f1'):
+        if key in frame:
+            frame[key] = frame[key].map(lambda x: f'{x:.3%}')
+    for key in ('log_loss', 'multiclass_brier'):
+        if key in frame:
+            frame[key] = frame[key].map(lambda x: f'{x:.6f}')
+    st.dataframe(frame.rename(columns={
+        'model': 'Classifier', 'system': 'System', 'split': 'Partition', 'records': 'Records',
+        'accuracy': 'Accuracy', 'macro_f1': 'Macro F1', 'weighted_f1': 'Weighted F1',
+        'log_loss': 'Log loss ↓', 'multiclass_brier': 'Brier score ↓',
+    }), hide_index=True, width='stretch')
 
 
 def reset_results():
-    st.session_state.pop("analysis", None)
+    st.session_state.pop('analysis', None)
 
 
 def clear_analysis():
-    st.session_state["input_text"] = ""
+    st.session_state['input_text'] = ''
     reset_results()
 
 
-def show_results(results):
-    st.markdown('<div class="section-kicker">Multi-model inference</div>', unsafe_allow_html=True)
-    st.subheader("Classification Results")
-    for column, name in zip(st.columns(3), MODEL_NAMES):
-        result = results[name]
-        with column, st.container(border=True):
-            st.markdown(f"### {name}")
-            st.metric("Predicted category", result["predicted_label"])
-            st.metric("Confidence", f"{result['confidence']:.2%}")
-            st.caption(
-                "TF-IDF features · full text" if name == "Logistic Regression"
-                else f"{result['number_of_chunks']} text section{'s' if result['number_of_chunks'] != 1 else ''}"
-            )
-
-    agreement = model_agreement(results)
-    st.markdown('<div class="section-kicker">Consensus</div>', unsafe_allow_html=True)
-    st.info("🧠 " + agreement["message"])
-    st.caption("Agreement describes consistency between classifiers; it does not establish factual truth.")
-    with st.expander("Prediction comparison"):
-        st.dataframe(pd.DataFrame([
-            {"Model": name, "Category": result["predicted_label"], "Confidence": f"{result['confidence']:.2%}"}
-            for name, result in results.items()
-        ]), hide_index=True, width="stretch")
-
-    st.markdown('<div class="section-kicker">Explainability</div>', unsafe_allow_html=True)
-    st.subheader("Category Probability Explorer")
-    for tab, name in zip(st.tabs(list(MODEL_NAMES)), MODEL_NAMES):
-        result = results[name]
-        with tab:
-            chart_column, table_column = st.columns([3, 2])
-            frame = pd.DataFrame({"Category": LABELS,
-                                  "Probability": [result["probability_by_label"][label] * 100 for label in LABELS]})
-            with chart_column:
-                st.bar_chart(frame, x="Category", y="Probability", horizontal=True, sort=False,
-                             color="#35649b", height=245, x_label="Probability (%)", y_label="")
-            with table_column:
-                table = frame.copy()
-                table["Probability"] = table["Probability"].map(lambda value: f"{value:.2f}%")
-                st.dataframe(table, hide_index=True, width="stretch", height=245)
-            if name != "Logistic Regression" and result["number_of_chunks"] > 1:
-                st.caption("Overlapping sections cover the complete text. Document probabilities are their arithmetic mean.")
-            with st.expander(f"{name} model details"):
-                st.caption(f"Model: {result['model_path']}")
-                if result["tokenizer_path"]:
-                    st.caption(f"Tokenizer: {result['tokenizer_path']}")
-                st.caption(f"Loaded artifact SHA-256: {result['weights_sha256']}")
-                st.caption("Project labels are read from the saved final mapping.")
+def final_signature():
+    """Invalidate displayed results when the selected model/layer files change."""
+    base = tuple(item for item in artifact_fingerprint() if item[0] in ('DistilBERT', 'registry'))
+    layer = []
+    for name in ('deployment.json', 'probability_only.joblib'):
+        path = final_decision.ARTIFACT_DIR / name
+        stat = path.stat() if path.is_file() else None
+        layer.append((name, stat.st_mtime_ns if stat else None, stat.st_size if stat else None))
+    return base + tuple(layer)
 
 
-st.markdown('<div class="section-kicker">Analyze content</div>', unsafe_allow_html=True)
-st.subheader("Paste a headline, post or article")
-text = st.text_area("Text to analyze", key="input_text", height=190,
-                    placeholder="Paste a headline, article or passage…",
-                    max_chars=MAX_INPUT_CHARACTERS, on_change=reset_results, label_visibility="collapsed")
-analyze_column, clear_column, _ = st.columns([1, 1, 6])
-analyze = analyze_column.button("⚡ Analyze", type="primary", width="stretch")
-clear_column.button("↺ Clear", on_click=clear_analysis, width="stretch")
+@st.cache_resource(show_spinner=False)
+def configure_inference():
+    # Match the measured local runtime; model loading is already cached by predict.py.
+    import torch
+    torch.set_num_threads(4)
+    return True
 
-if analyze:
-    reset_results()
-    if not text.strip():
-        st.warning("Please enter text before running the analysis.")
-    else:
-        try:
-            with st.spinner("Loading local models and analyzing text…"):
-                cached_classifiers(signature)
-                results = predict_text(text)
-            analysis = {"text": text, "signature": signature, "classification": results}
+
+def user_view():
+    st.markdown('''<div class="hero"><div class="eyebrow">USER · Content analysis</div>
+    <h1>Understand the category of a text.</h1>
+    <p>Paste a headline, post or article to receive one category and its model confidence.</p></div>''', unsafe_allow_html=True)
+    st.subheader('Text to analyze')
+    text = st.text_area('Text to analyze', key='input_text', height=230,
+                        placeholder='Paste your text here…', max_chars=MAX_INPUT_CHARACTERS,
+                        on_change=reset_results, label_visibility='collapsed')
+    st.caption('Up to 50,000 characters. Longer articles take more time to analyze.')
+    analyze_col, clear_col, _ = st.columns([1, 1, 4])
+    analyze = analyze_col.button('Analyze', key='analyze', type='primary', width='stretch')
+    clear_col.button('Clear', key='clear', on_click=clear_analysis, width='stretch')
+    signature = final_signature()
+    if analyze:
+        reset_results()
+        if not text.strip():
+            st.warning('Please enter text before running the analysis.')
+        else:
             try:
-                analysis["sentiment"] = predict_sentiment(text)
+                with st.spinner('Analyzing your text… The first analysis may take longer.'):
+                    configure_inference()
+                    result = final_decision.predict_final(text, system='probability_only')
+                st.session_state['analysis'] = {'text': text, 'signature': signature, 'result': result}
+            except ValueError:
+                st.error('This text could not be analyzed. Try a passage with readable words. If the issue persists, contact the administrator.')
+                logging.getLogger(__name__).exception('Final prediction validation failed')
             except Exception:
-                analysis["sentiment_error"] = True
-            st.session_state["analysis"] = analysis
-        except Exception as error:
-            st.error("The analysis could not be completed. All three final local classifiers are required.")
-            with st.expander("Technical details"):
-                st.exception(error)
-
-analysis = st.session_state.get("analysis")
-if analysis and analysis["text"] == text and analysis["signature"] == signature:
-    show_results(analysis["classification"])
-    st.markdown('<div class="section-kicker">Independent signal</div>', unsafe_allow_html=True)
-    st.subheader("VADER Sentiment Analysis")
-    st.caption("VADER measures emotional tone independently. Its scores do not determine any classifier's category.")
-    if "sentiment" in analysis:
-        sentiment = analysis["sentiment"]
+                st.error('Analysis is currently unavailable. Please try again or contact the administrator.')
+                logging.getLogger(__name__).exception('Final prediction failed')
+    analysis = st.session_state.get('analysis')
+    if analysis and analysis['text'] == text and analysis['signature'] == signature:
+        result = analysis['result']
+        st.divider()
+        st.subheader('Your result')
         with st.container(border=True):
-            columns = st.columns(5)
-            columns[0].metric("Overall Sentiment", sentiment["sentiment_label"])
-            columns[1].metric("Compound Score", f"{sentiment['compound']:.3f}")
-            for column, key in zip(columns[2:], ("positive", "neutral", "negative")):
-                column.metric(key.capitalize(), f"{sentiment[key]:.1%}")
-        st.caption("Compound score: −1 (negative) to +1 (positive).")
-    else:
-        st.warning("Sentiment is unavailable; the three classification results above are complete.")
+            category, confidence = st.columns([3, 1])
+            category.metric('Final category', result['predicted_label'])
+            confidence.metric('Confidence', f"{result['confidence']:.2%}")
+    elif analysis:
+        reset_results()
+    st.caption('The system chooses among six content categories. Confidence is a model estimate, not verification that a claim is true or false.')
 
-with st.expander("📊 Research performance & model information"):
-    st.markdown(
-        "**BERT:** a full-size bidirectional Transformer. "
-        "**DistilBERT:** a smaller distilled Transformer using the preserved corrected experiment. "
-        "**Logistic Regression:** a classical classifier using TF-IDF word and phrase features. "
-        "**VADER:** a separate rule-based sentiment analyzer."
-    )
-    st.write(
-        f"Both Transformers use a {TRANSFORMER_MAX_LENGTH}-token limit including special tokens. "
-        f"Short input is classified directly. Long input uses a {CHUNK_OVERLAP_TOKENS}-token overlap, "
-        "with mean section probabilities. Logistic Regression processes the full text."
-    )
-    comparison_path = ROOT / "results/final_model_comparison/test_metrics.csv"
-    if comparison_path.is_file():
-        comparison = pd.read_csv(comparison_path)
-        st.dataframe(comparison, hide_index=True, width="stretch")
-        st.caption("All three models use the same frozen split: 5,921 training, 1,269 validation and 1,269 test records.")
-    st.caption(
-        "The dataset combines source-supervised and heuristic labels. Source/style cues and overlap in concepts "
-        "limit generalization; these results are not independent fact-checking or unseen-source validation."
-    )
 
-st.caption(
-    "Model confidence is the classifier's probability output and should not be interpreted "
-    "as independent factual verification of a news claim. The system chooses among six supported categories."
-)
-st.markdown('<div class="project-footer">University Final Project · Local NLP Model Comparison</div>', unsafe_allow_html=True)
+def models_panel(classifiers):
+    st.subheader('Three classifiers. One frozen dataset.')
+    st.caption('5,921 TRAIN · 1,269 validation · 1,269 test records. All values come from the saved evaluation.')
+    for col, model in zip(st.columns(3), MODEL_SLUGS):
+        row = classifiers[(classifiers.model == model) & (classifiers.split == 'test')].iloc[0]
+        with col, st.container(border=True):
+            st.markdown(f'**{model}**')
+            st.metric('Test accuracy', f'{row.accuracy:.3%}')
+            st.caption(f'Test macro F1 · {row.macro_f1:.6f}')
+    st.markdown('#### TRAIN / Validation / Test')
+    metrics_table(classifiers)
+    st.download_button('Download classifier metrics', (EVIDENCE / 'classifier_comparison.csv').read_bytes(),
+                       file_name='classifier_comparison.csv', mime='text/csv')
+    for col, metric in zip(st.columns(2), ('accuracy', 'macro_f1')):
+        with col:
+            figure(f'classifier_{metric}_comparison.png', f'TRAIN, validation and test · {metric.replace("_", " ")}')
+    st.markdown('#### Why corrected DistilBERT was selected')
+    selection = read_json('classifier_selection.json')
+    ranking = pd.DataFrame({'Classifier': selection['validation_macro_f1'].keys(),
+                            'Validation macro F1': selection['validation_macro_f1'].values()})
+    st.dataframe(ranking, hide_index=True, width='stretch')
+    st.success('DistilBERT had the highest validation macro F1. Test results did not determine the selection.')
+    st.caption('The margin over BERT is small; this ranking does not establish statistically significant superiority.')
+    with st.expander('Generalization gaps'):
+        figure('generalization_gaps.png', 'TRAIN minus validation/test macro F1; smaller gaps indicate closer scores.')
+
+
+def decisions_panel(decisions):
+    st.subheader('Does a Decision Layer help?')
+    st.markdown('**A** uses DistilBERT alone. **B** learns from its six probabilities. **C** adds four VADER sentiment features to those probabilities.')
+    st.success('Selected for USER: B · Corrected DistilBERT → probability-only Decision Layer')
+    st.markdown('#### Selection evidence · nested validation OOF')
+    metrics_table(decisions[decisions.split == 'validation_nested_oof'])
+    st.caption('Selection used nested grouped cross-validation on the validation partition: 5 outer folds, 4 inner folds. Final layers were refit on validation only.')
+    st.markdown('#### Final comparison · TRAIN / Validation / Test')
+    metrics_table(decisions[decisions.split != 'validation_nested_oof'])
+    st.info('Final-fit validation scores for B/C are resubstitution scores. Use nested OOF above for the decision comparison. TRAIN scores are diagnostics on the base classifier’s training data.')
+    for col, metric in zip(st.columns(2), ('accuracy', 'macro_f1')):
+        with col:
+            figure(f'decision_{metric}_comparison.png', f'A/B/C · {metric.replace("_", " ")}')
+    st.markdown('#### VADER’s measured impact')
+    impact = read_json('sentiment_value.json')
+    delta = impact['test_differences']['vader_fusion_minus_probability_only']
+    left, right = st.columns(2)
+    left.metric('C − B · test accuracy', f"{100 * delta['accuracy']['difference']:+.4f} pp")
+    right.metric('C − B · test macro F1', f"{100 * delta['macro_f1']['difference']:+.4f} pp")
+    st.warning('No statistically supported incremental VADER benefit. Both variants have the same test accuracy; the macro-F1 difference interval includes zero.')
+    st.caption(f"C − B macro-F1 95% interval: [{delta['macro_f1']['ci95_low']:.6f}, {delta['macro_f1']['ci95_high']:.6f}]. Paired cluster bootstrap, 2,000 resamples. pp = percentage points.")
+    figure('decision_impact_uncertainty.png', 'All test macro-F1 difference intervals include zero.')
+    with st.expander('Probability quality and confidence'):
+        st.write('The Decision Layers improve hard-label test accuracy slightly, but worsen log loss. Their confidence is not independently calibrated factual certainty.')
+        figure('decision_probability_quality.png', 'Saved probability-quality comparison.')
+
+
+def confusion_panel():
+    st.subheader('Where the systems make mistakes')
+    family = st.radio('Comparison', ['Classifiers', 'Decision systems'], horizontal=True, key='matrix_family')
+    choices = MODEL_SLUGS if family == 'Classifiers' else {v: k for k, v in SYSTEM_NAMES.items()}
+    model_col, split_col = st.columns(2)
+    model = model_col.selectbox('Model / system', list(choices), key='matrix_model')
+    partitions = ['TRAIN', 'Validation', 'Test'] + (['Validation · nested OOF'] if family == 'Decision systems' else [])
+    split = split_col.selectbox('Partition', partitions, index=2, key='matrix_split')
+    partition = {v: k for k, v in SPLIT_NAMES.items()}[split]
+    folder = 'classifiers' if family == 'Classifiers' else 'fusion'
+    stem = f'{folder}/{choices[model]}/{partition}_confusion_matrix'
+    figure(stem + '.png', f'{model} · {split} · rows = true category; columns = predicted category')
+    with st.expander('Exact counts'):
+        st.dataframe(read_csv(stem + '.csv').set_index('true_category'), width='stretch')
+        st.download_button('Download this matrix', (EVIDENCE / (stem + '.csv')).read_bytes(),
+                           file_name=f'{choices[model]}_{partition}_confusion_matrix.csv', mime='text/csv')
+
+
+def runtime_panel():
+    st.subheader('Latency & input robustness')
+    runtime = read_json('runtime_benchmark.json')
+    st.caption(f"Measured on CPU · {runtime['torch_threads']} PyTorch threads · {runtime['platform']}")
+    frame = read_csv('runtime_latency_summary.csv')
+    selected = frame[frame.system == 'probability_only'].set_index('input_size')
+    for col, size, title in zip(st.columns(4), ['short', 'medium', 'long', 'near_limit'],
+                                ['Short · 101 chars', 'Medium · 791 chars', 'Long · 5,939 chars', 'Near limit · 49,999 chars']):
+        col.metric(title, f"{selected.loc[size, 'p95_seconds']:.3f} s")
+    st.caption('Selected system · warm API p95 · 10 repetitions per input size. No UI, network or concurrent-user latency included.')
+    figure('runtime_latency_comparison.png', 'A/B/C latency across four input lengths.')
+    with st.expander('All timings & measurement scope'):
+        frame['system'] = frame.system.map(SYSTEM_NAMES)
+        st.dataframe(frame, hide_index=True, width='stretch')
+        cold = pd.DataFrame(runtime['cold_start'])[['system', 'seconds_including_imports_and_loading']]
+        cold['system'] = cold.system.map(SYSTEM_NAMES)
+        st.markdown('**Cold starts · one fresh process per system**')
+        st.dataframe(cold, hide_index=True, width='stretch')
+        st.caption('Cold starts overlapped the workspace integrity scan and include host/disk contention. Sequential timings do not isolate Decision Layer or VADER overhead. No numerical response-time target was supplied.')
+    st.markdown('#### 14 live edge cases')
+    edges = pd.DataFrame(read_json('edge_cases.json')['cases'])
+    rejected = int((edges.status == 'rejected').sum())
+    st.write(f'{rejected} invalid/unusable inputs rejected · {len(edges) - rejected} inputs returned finite, normalized six-class probabilities.')
+    st.dataframe(edges.fillna('').rename(columns={'case': 'Case', 'status': 'Outcome', 'reason': 'Rejection reason',
+                    'contract_valid': 'Valid probabilities', 'category': 'Observed category', 'confidence': 'Confidence'}).astype(str),
+                 hide_index=True, width='stretch')
+    st.warning('Robustness is not semantic accuracy: punctuation-only and URL-only inputs received high confidence. An abstention/content-quality gate remains a product improvement.')
+
+
+def architecture_panel():
+    st.subheader('One final prediction path')
+    st.markdown('''<div class="flow">
+    <div class="flow-step"><b>1 · Text</b><small>Whitespace normalization<br>50,000-character limit</small></div>
+    <div class="flow-step"><b>2 · Corrected DistilBERT</b><small>Frozen local classifier<br>Six category probabilities</small></div>
+    <div class="flow-step"><b>3 · Decision Layer</b><small>Saved scaler + multinomial Logistic Regression<br>Probability inputs only</small></div>
+    <div class="flow-step"><b>4 · Final result</b><small>One category<br>One confidence value</small></div>
+    </div>''', unsafe_allow_html=True)
+    st.write('Long documents use 512-token windows with 16-token overlap; document probabilities are the mean of window probabilities. The final Decision Layer operates on that six-probability vector.')
+    st.markdown('**USER:** calls `predict_final(text, system="probability_only")`. Models load only when Analyze is pressed; the existing inference cache reuses the selected classifier.')
+    st.markdown('**ADMIN:** reads saved metrics, figures and verification records. It performs no training, model comparison inference or experiment reruns.')
+    st.caption('VADER is part of experimental system C only. It is not used by the selected USER prediction path. Model and layer hashes, class mapping and feature order are checked by the existing prediction API.')
+    st.markdown('#### Supported categories')
+    st.dataframe(pd.DataFrame({'ID': list(final_decision.CATEGORIES), 'Category': list(final_decision.CATEGORIES.values())}),
+                 hide_index=True, width='stretch')
+
+
+def verification_panel():
+    st.subheader('Verification & limits of the evidence')
+    baseline = read_json('test_results.json')
+    cols = st.columns(3)
+    cols[0].metric('Phase 1–5 tests passed', baseline['tests_run'] - baseline['failures'] - baseline['errors'] - baseline['skipped'])
+    cols[1].metric('Failures / errors', f"{baseline['failures']} / {baseline['errors']}")
+    cols[2].metric('Skipped', baseline['skipped'])
+    st.caption('Saved 56-test baseline from before the Streamlit upgrade; not a claim that the full suite was rerun for this UI. The upgrade uses focused app and prediction-path checks.')
+    upgrade_path = ROOT / 'results/streamlit_upgrade/test_results.json'
+    if upgrade_path.is_file():
+        upgrade = json.loads(upgrade_path.read_text(encoding='utf-8'))
+        if upgrade['successful']:
+            st.success(f"Streamlit upgrade checks: {upgrade['tests_run']} passed, {upgrade['failures']} failures, {upgrade['errors']} errors, {upgrade['skipped']} skipped.")
+        else:
+            st.error('The latest focused Streamlit checks did not pass. Review the upgrade test log.')
+    st.markdown('#### Saved integrity verification')
+    integrity = read_json('integrity_verification.json')
+    st.write(f"Before this authorized UI upgrade, all {integrity['original_protected_files_verified']} original protected files were verified and {integrity['continuation_snapshot_files']:,} baseline files were compared. Protected project content was unchanged; Git capture metadata differences were documented separately.")
+    st.caption('This is historical Phase 1–5 evidence. The app and its interaction tests have since been intentionally upgraded; the old integrity snapshot is not asserted against the new UI.')
+    st.markdown('#### Limitations')
+    st.warning('The test partition is locked regression evidence, not an untouched independent evaluation. Earlier test/probe observations informed dataset correction.')
+    for item in read_json('experiment_config.json')['limitations']:
+        st.markdown(f'- {item}')
+    st.markdown('- No independent non-English or long-document accuracy benchmark, UI/concurrency load test, or numerical product acceptance targets.\n- Closed six-category output: no neutral/unknown class or abstention gate. Unusual text can receive excessive confidence.\n- USER / ADMIN are local presentation views, not authenticated access roles.')
+    st.download_button('Download the final Phases 1–5 report', (EVIDENCE / 'experiment_report.md').read_bytes(),
+                       file_name='Phases_1-5_final_report.md', mime='text/markdown')
+
+
+def admin_view():
+    st.markdown('''<div class="hero"><div class="eyebrow">ADMIN · Research evidence</div>
+    <h1>From evaluation to one final system.</h1>
+    <p>Compare classifiers, inspect the decision experiments and review the measured limits of the selected system.</p></div>''', unsafe_allow_html=True)
+    st.caption('Saved Phase 1–5 evidence · final_decision_v1 · local presentation view')
+    classifiers, decisions = read_csv('classifier_comparison.csv'), read_csv('decision_comparison.csv')
+    tabs = st.tabs(['Models & selection', 'Decision Layer & VADER', 'Confusion matrices',
+                    'Latency & edge cases', 'Architecture', 'Tests & limitations'])
+    with tabs[0]: models_panel(classifiers)
+    with tabs[1]: decisions_panel(decisions)
+    with tabs[2]: confusion_panel()
+    with tabs[3]: runtime_panel()
+    with tabs[4]: architecture_panel()
+    with tabs[5]: verification_panel()
+
+
+st.markdown(f'**{APP_NAME}**')
+view = st.radio('View', ['USER', 'ADMIN'], horizontal=True, key='view', on_change=reset_results)
+if view == 'USER':
+    user_view()
+else:
+    try:
+        admin_view()
+    except (OSError, ValueError, KeyError) as error:
+        st.error('Saved research evidence could not be displayed. Restore the verified results before presenting this view.')
+        logging.getLogger(__name__).exception('Research evidence unavailable: %s', error)
+st.markdown('<div class="footer">University Final Project · Six-category content classification · Local inference</div>', unsafe_allow_html=True)

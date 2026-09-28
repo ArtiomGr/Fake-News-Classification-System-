@@ -1,0 +1,108 @@
+{
+  "validation_nested_oof": {
+    "probability_only_minus_classifier_alone": {
+      "accuracy": {
+        "difference": 0.0031520882584712417,
+        "ci95_low": 0.0007163195591042892,
+        "ci95_high": 0.0066986046660735795
+      },
+      "macro_f1": {
+        "difference": 0.0035140783455485103,
+        "ci95_low": 0.0008569130543720632,
+        "ci95_high": 0.008819244683871824
+      },
+      "weighted_f1": {
+        "difference": 0.00310720091149419,
+        "ci95_low": 0.0006922658795267128,
+        "ci95_high": 0.006645247586037152
+      }
+    },
+    "vader_fusion_minus_classifier_alone": {
+      "accuracy": {
+        "difference": 0.0015760441292356209,
+        "ci95_low": 0.0,
+        "ci95_high": 0.004118701029891752
+      },
+      "macro_f1": {
+        "difference": 0.0018472917586354054,
+        "ci95_low": 0.0,
+        "ci95_high": 0.004591754411779416
+      },
+      "weighted_f1": {
+        "difference": 0.0015458581780282143,
+        "ci95_low": -2.406014500448417e-05,
+        "ci95_high": 0.004083890364462285
+      }
+    },
+    "vader_fusion_minus_probability_only": {
+      "accuracy": {
+        "difference": -0.0015760441292356209,
+        "ci95_low": -0.0042627566008024255,
+        "ci95_high": 0.0
+      },
+      "macro_f1": {
+        "difference": -0.0016667865869131049,
+        "ci95_low": -0.006299566386201031,
+        "ci95_high": 0.0
+      },
+      "weighted_f1": {
+        "difference": -0.0015613427334659757,
+        "ci95_low": -0.004221433129578689,
+        "ci95_high": 0.0
+      }
+    }
+  },
+  "test": {
+    "probability_only_minus_classifier_alone": {
+      "accuracy": {
+        "difference": 0.0031520882584712417,
+        "ci95_low": -0.0016585127606559475,
+        "ci95_high": 0.008196889414865726
+      },
+      "macro_f1": {
+        "difference": 0.003506981925653463,
+        "ci95_low": -0.002121504059953988,
+        "ci95_high": 0.011039937256949725
+      },
+      "weighted_f1": {
+        "difference": 0.003112098469155722,
+        "ci95_low": -0.0016867670870971325,
+        "ci95_high": 0.008176031293547902
+      }
+    },
+    "vader_fusion_minus_classifier_alone": {
+      "accuracy": {
+        "difference": 0.0031520882584712417,
+        "ci95_low": 0.0,
+        "ci95_high": 0.007025761124121788
+      },
+      "macro_f1": {
+        "difference": 0.003755914718522102,
+        "ci95_low": -0.00023555380443089074,
+        "ci95_high": 0.008107349666535419
+      },
+      "weighted_f1": {
+        "difference": 0.003144975142797879,
+        "ci95_low": -3.7872548840073296e-05,
+        "ci95_high": 0.007016758491701027
+      }
+    },
+    "vader_fusion_minus_probability_only": {
+      "accuracy": {
+        "difference": 0.0,
+        "ci95_low": -0.0036982248520709415,
+        "ci95_high": 0.003861302931790915
+      },
+      "macro_f1": {
+        "difference": 0.0002489327928686391,
+        "ci95_low": -0.005983154631713125,
+        "ci95_high": 0.004303453976956958
+      },
+      "weighted_f1": {
+        "difference": 3.287667364215707e-05,
+        "ci95_low": -0.003644450890418596,
+        "ci95_high": 0.0038773176336523735
+      }
+    }
+  }
+}

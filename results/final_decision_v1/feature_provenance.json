@@ -1,0 +1,27 @@
+{
+  "selected_classifier": "DistilBERT",
+  "source_probabilities_sha256": "b944b3ce7efcc67385c207c81de7d9ff4748189d75d5e64edfdcb45087b68f27",
+  "features_sha256": "1abc533f8053fd07f9415bb91817561df933192de6e81098377b87e5ebd77928",
+  "feature_names": [
+    "p_1_native_advertising",
+    "p_2_news_satire",
+    "p_3_propaganda",
+    "p_4_manipulation",
+    "p_5_news_parody",
+    "p_6_fabrication",
+    "vader_neg",
+    "vader_neu",
+    "vader_pos",
+    "vader_compound"
+  ],
+  "text": "Exact dataset text, with identical whitespace normalization for classifier and VADER; text_sha256 records original UTF-8 text.",
+  "metadata_not_model_inputs": [
+    "dataset_row",
+    "split",
+    "group_id",
+    "text_group_id",
+    "project_label",
+    "internal_label",
+    "text_sha256"
+  ]
+}
