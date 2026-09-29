@@ -9,7 +9,11 @@ import os
 from threading import RLock
 from time import perf_counter
 
-if os.getenv("HF_MODEL_DOWNLOAD") == "1":
+REMOTE_MODEL_DOWNLOAD = (os.getenv("HF_MODEL_DOWNLOAD") == "1"
+                         or bool(os.getenv("SPACE_ID"))
+                         or bool(os.getenv("HF_SPACE_ID")))
+
+if REMOTE_MODEL_DOWNLOAD:
     os.environ.pop("HF_HUB_OFFLINE", None)
     os.environ.pop("TRANSFORMERS_OFFLINE", None)
 else:
@@ -45,7 +49,7 @@ def _required_artifacts(model_name):
 
 def _ensure_remote_model(model_name):
     """Download a missing Transformer snapshot when remote deployment opts in."""
-    if model_name not in REMOTE_MODEL_REPOS or os.getenv("HF_MODEL_DOWNLOAD") != "1":
+    if model_name not in REMOTE_MODEL_REPOS or not REMOTE_MODEL_DOWNLOAD:
         return
     path = MODEL_PATHS[model_name]
     if all((path / filename).is_file() for filename in _required_artifacts(model_name)):
