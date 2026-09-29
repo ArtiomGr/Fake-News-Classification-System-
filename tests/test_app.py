@@ -56,6 +56,7 @@ class FinalDashboardTests(unittest.TestCase):
         self.assertAlmostEqual(result['confidence'], 0.9981574661471784, places=5)
         self.assertEqual(len(app.metric), 6)
         self.assertEqual(app.metric[0].label, 'Final category')
+        self.assertEqual(app.metric[1].label, 'Model confidence')
         self.assertEqual(app.metric[1].value, f"{expected['confidence']:.2%}")
         self.assertEqual(len(app.dataframe), 0)
         app.run()
