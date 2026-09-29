@@ -45,22 +45,21 @@ class FinalDashboardTests(unittest.TestCase):
 
     def test_actual_final_path_one_category_confidence_and_clear(self):
         app = self.app()
-        with patch.object(final_decision, 'vader_features', side_effect=AssertionError('USER must not run VADER')):
-            self.analyze(app)
-            expected = final_decision.predict_final(TRAVELPRO, system='probability_only')
+        self.analyze(app)
+        expected = final_decision.predict_final(TRAVELPRO, system='vader_fusion')
         self.assertEqual(len(app.error), 0)
         result = app.session_state['analysis']['result']
-        self.assertEqual(result['system'], 'probability_only')
+        self.assertEqual(result['system'], 'vader_fusion')
         self.assertEqual(result['classifier'], 'DistilBERT')
         self.assertEqual(result['predicted_label'], 'Native Advertising')
         self.assertAlmostEqual(result['confidence'], expected['confidence'], places=10)
-        self.assertAlmostEqual(result['confidence'], 0.9976915725140778, places=5)
-        self.assertEqual(len(app.metric), 2)
+        self.assertAlmostEqual(result['confidence'], 0.9981574661471784, places=5)
+        self.assertEqual(len(app.metric), 6)
         self.assertEqual(app.metric[0].label, 'Final category')
         self.assertEqual(app.metric[1].value, f"{expected['confidence']:.2%}")
         self.assertEqual(len(app.dataframe), 0)
         app.run()
-        self.assertEqual(len(app.metric), 2)
+        self.assertEqual(len(app.metric), 6)
         app.button(key='clear').click().run()
         self.assertEqual(app.text_area(key='input_text').value, '')
         self.assertEqual(len(app.metric), 0)
@@ -81,7 +80,7 @@ class FinalDashboardTests(unittest.TestCase):
         app = self.analyze(self.app())
         with patch.object(final_decision, 'predict_final', side_effect=RuntimeError('Unavailable layer')) as call:
             self.analyze(app)
-            call.assert_called_once_with(TRAVELPRO, system='probability_only')
+            call.assert_called_once_with(TRAVELPRO, system='vader_fusion')
         self.assertIn('Analysis is currently unavailable', app.error[0].value)
         self.assertEqual(len(app.metric), 0)
 
