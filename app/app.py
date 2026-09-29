@@ -134,11 +134,17 @@ def user_view():
                     configure_inference()
                     result = final_decision.predict_final(text, system='probability_only')
                 st.session_state['analysis'] = {'text': text, 'signature': signature, 'result': result}
-            except ValueError:
+            except ValueError as error:
+                message = f'{type(error).__name__}: {error}'
+                print(f'[prediction-error] {message}', flush=True)
                 st.error('This text could not be analyzed. Try a passage with readable words. If the issue persists, contact the administrator.')
+                st.caption(f'Debug reason: {message}')
                 logging.getLogger(__name__).exception('Final prediction validation failed')
-            except Exception:
+            except Exception as error:
+                message = f'{type(error).__name__}: {error}'
+                print(f'[prediction-error] {message}', flush=True)
                 st.error('Analysis is currently unavailable. Please try again or contact the administrator.')
+                st.caption(f'Debug reason: {message}')
                 logging.getLogger(__name__).exception('Final prediction failed')
     analysis = st.session_state.get('analysis')
     if analysis and analysis['text'] == text and analysis['signature'] == signature:
