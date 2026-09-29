@@ -164,7 +164,7 @@ def user_view():
         with st.container(border=True):
             category, confidence = st.columns([3, 1])
             category.metric('Final category', result['predicted_label'])
-            confidence.metric('Confidence', f"{result['confidence']:.2%}")
+            confidence.metric('Model confidence', f"{result['confidence']:.2%}")
         sentiment = analysis['sentiment']
         st.subheader('Sentiment analysis')
         sentiment_columns = st.columns(4)
@@ -179,7 +179,7 @@ def user_view():
         }, index=['Sentiment']), y_label='Share')
     elif analysis:
         reset_results()
-    st.caption('The final category uses DistilBERT probabilities and VADER sentiment features. Confidence is a model estimate, not verification that a claim is true or false.')
+    st.caption('The final category uses DistilBERT probabilities and VADER sentiment features. Model confidence is an estimate, not verification that a claim is true or false.')
 
 
 def models_panel(classifiers):
@@ -213,6 +213,7 @@ def decisions_panel(decisions):
     st.subheader('Does a Decision Layer help?')
     st.markdown('**A** uses DistilBERT alone. **B** learns from its six probabilities. **C** adds four VADER sentiment features to those probabilities.')
     st.success('Selected for USER: C · Corrected DistilBERT + VADER Fusion')
+    st.caption('Historical comparison system B is named `probability_only`; the active USER path is system C.')
     st.markdown('#### Selection evidence · nested validation OOF')
     metrics_table(decisions[decisions.split == 'validation_nested_oof'])
     st.caption('Selection used nested grouped cross-validation on the validation partition: 5 outer folds, 4 inner folds. Final layers were refit on validation only.')
