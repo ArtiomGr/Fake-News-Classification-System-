@@ -54,7 +54,10 @@ def _ensure_remote_model(model_name):
     path = MODEL_PATHS[model_name]
     if all((path / filename).is_file() for filename in _required_artifacts(model_name)):
         return
-    from huggingface_hub import snapshot_download
+    from huggingface_hub import constants, snapshot_download
+    # huggingface_hub caches this flag during import, so clearing environment
+    # variables alone is insufficient when the host starts in offline mode.
+    constants.HF_HUB_OFFLINE = False
     path.mkdir(parents=True, exist_ok=True)
     snapshot_download(
         repo_id=REMOTE_MODEL_REPOS[model_name],
