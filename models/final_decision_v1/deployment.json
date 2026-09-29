@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "selected_classifier": "DistilBERT",
+  "selected_classifier_weights_sha256": "b1883d55a06b89285e4ab64be1977627dec9202633b86bc79397fad9b505bb48",
+  "recommended_system": "probability_only",
+  "selection_basis": "nested validation OOF macro F1; ties prefer A, B, C",
+  "development_metrics": {
+    "classifier_alone": {
+      "records": 1269,
+      "accuracy": 0.9858156028368794,
+      "macro_f1": 0.9842883723789925,
+      "weighted_f1": 0.9858907999689672,
+      "log_loss": 0.059288326032629575,
+      "multiclass_brier": 0.02352530918976903
+    },
+    "probability_only": {
+      "records": 1269,
+      "accuracy": 0.9889676910953507,
+      "macro_f1": 0.987802450724541,
+      "weighted_f1": 0.9889980008804614,
+      "log_loss": 0.0657529725728768,
+      "multiclass_brier": 0.020942503264530017
+    },
+    "vader_fusion": {
+      "records": 1269,
+      "accuracy": 0.987391646966115,
+      "macro_f1": 0.9861356641376279,
+      "weighted_f1": 0.9874366581469954,
+      "log_loss": 0.07135698077802831,
+      "multiclass_brier": 0.023213279284609135
+    }
+  },
+  "test_used_for_selection": false,
+  "label_mapping": {
+    "project_id_to_category": {
+      "1": "Native Advertising",
+      "2": "News Satire",
+      "3": "Propaganda",
+      "4": "Manipulation",
+      "5": "News Parody",
+      "6": "Fabrication"
+    },
+    "internal_id_to_category": {
+      "0": "Native Advertising",
+      "1": "News Satire",
+      "2": "Propaganda",
+      "3": "Manipulation",
+      "4": "News Parody",
+      "5": "Fabrication"
+    },
+    "category_to_internal_id": {
+      "Native Advertising": 0,
+      "News Satire": 1,
+      "Propaganda": 2,
+      "Manipulation": 3,
+      "News Parody": 4,
+      "Fabrication": 5
+    },
+    "internal_id_to_project_id": {
+      "0": 1,
+      "1": 2,
+      "2": 3,
+      "3": 4,
+      "4": 5,
+      "5": 6
+    }
+  },
+  "artifacts": {
+    "probability_only": {
+      "filename": "probability_only.joblib",
+      "sha256": "e14768d2af568baadd4b497c63d1f336a0f8133f69033c6ffba751ff8b301764",
+      "C": 100.0,
+      "feature_names": [
+        "p_1_native_advertising",
+        "p_2_news_satire",
+        "p_3_propaganda",
+        "p_4_manipulation",
+        "p_5_news_parody",
+        "p_6_fabrication"
+      ],
+      "fit_partition": "validation",
+      "fit_records": 1269,
+      "classes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "vader_fusion": {
+      "filename": "vader_fusion.joblib",
+      "sha256": "f25eef59e813cb2549af807789ace1fa3a1db95fb63450b15a7630095ddeff2b",
+      "C": 100.0,
+      "feature_names": [
+        "p_1_native_advertising",
+        "p_2_news_satire",
+        "p_3_propaganda",
+        "p_4_manipulation",
+        "p_5_news_parody",
+        "p_6_fabrication",
+        "vader_neg",
+        "vader_neu",
+        "vader_pos",
+        "vader_compound"
+      ],
+      "fit_partition": "validation",
+      "fit_records": 1269,
+      "classes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  "dataset_sha256": "a44b118d36942a151b99c8907ef613f98a0ad34bc566d22f3419c2ee41a54842",
+  "split_manifest_sha256": "5149b198301db87d72ec016b803da03683f99ec9b1e3bb449295fc0cd37d5e94",
+  "experiment_config_sha256": "007903632a150e3056288c781eeca8d0e5f25fec0b27f130c1f8a30b423f48f7",
+  "limitations": [
+    "Validation records influenced frozen classifier checkpoint selection; nested decision-layer CV does not undo this dependence.",
+    "Earlier test/probe results informed Native Advertising dataset correction; test is locked regression evidence, not untouched independent evidence.",
+    "Source-supervised/heuristic labels and source/style correlations limit generalization; sources are not held out wholesale.",
+    "Known groups are separated; undetected semantic overlap may remain.",
+    "Only 144 validation and 144 test Fabrication examples; small differences can be unstable.",
+    "Final decision layers fit validation only. Their train-partition scores are diagnostics on base-classifier training data, not generalization estimates.",
+    "Final-fit validation scores are resubstitution; nested out-of-fold scores are the decision development comparison.",
+    "No independent long-document accuracy benchmark; runtime uses existing overlapping-window mean probabilities.",
+    "Probabilities are assessed for calibration but are not factual verification or guaranteed calibrated confidence."
+  ]
+}
