@@ -9,9 +9,13 @@ import os
 from threading import RLock
 from time import perf_counter
 
-os.environ["HF_HUB_OFFLINE"] = "1"
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
-os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
+if os.getenv("HF_MODEL_DOWNLOAD") == "1":
+    os.environ.pop("HF_HUB_OFFLINE", None)
+    os.environ.pop("TRANSFORMERS_OFFLINE", None)
+else:
+    os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
 
 import numpy as np
 from final_project import ROOT, MODEL_PATHS, DISTIL_RESULTS, MAPPING, read_json, sha256
@@ -22,6 +26,10 @@ MODEL_NAMES = tuple(MODEL_PATHS)
 TRANSFORMER_MAX_LENGTH = 512
 CHUNK_OVERLAP_TOKENS = 16
 MAX_INPUT_CHARACTERS = 50_000
+REMOTE_MODEL_REPOS = {
+    "BERT": os.getenv("BERT_MODEL_REPO", "Artiomg1/truthlens-bert-base"),
+    "DistilBERT": os.getenv("DISTILBERT_MODEL_REPO", "Artiomg1/truthlens-distilbert"),
+}
 _INFERENCE_LOCK = RLock()
 
 
@@ -33,6 +41,22 @@ def _required_artifacts(model_name):
     files = ("model.safetensors", "config.json", "tokenizer.json",
              "tokenizer_config.json", "label_mapping.json")
     return files + (("experiment.json",) if model_name == "BERT" else ())
+
+
+def _ensure_remote_model(model_name):
+    """Download a missing Transformer snapshot when remote deployment opts in."""
+    if model_name not in REMOTE_MODEL_REPOS or os.getenv("HF_MODEL_DOWNLOAD") != "1":
+        return
+    path = MODEL_PATHS[model_name]
+    if all((path / filename).is_file() for filename in _required_artifacts(model_name)):
+        return
+    from huggingface_hub import snapshot_download
+    path.mkdir(parents=True, exist_ok=True)
+    snapshot_download(
+        repo_id=REMOTE_MODEL_REPOS[model_name],
+        local_dir=str(path),
+        token=os.getenv("HF_TOKEN"),
+    )
 
 
 def artifact_fingerprint():
@@ -55,6 +79,7 @@ def artifact_fingerprint():
 def get_model_metadata(model_name="DistilBERT"):
     required = _required_artifacts(model_name)
     path = MODEL_PATHS[model_name]
+    _ensure_remote_model(model_name)
     missing = [name for name in required if not (path / name).is_file()]
     if missing:
         raise FileNotFoundError(f"Final local {model_name} model is incomplete at {path}: {', '.join(missing)}")

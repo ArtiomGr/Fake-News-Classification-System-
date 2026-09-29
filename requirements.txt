@@ -10,5 +10,6 @@ streamlit==1.61.1
 vaderSentiment==3.3.2
 joblib==1.5.3
 accelerate==1.14.0
+huggingface-hub==1.27.0
 pyarrow==24.0.0
 safetensors==0.8.0

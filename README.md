@@ -71,6 +71,10 @@ Everything above except the two weight files is included in the proposed Git cha
 
 Open **http://127.0.0.1:8501**. Paste text, select **Analyze**, and review the three predictions, agreement, probability tabs, and VADER. **Clear** resets input/results; editing input removes stale results. Stop and restart Streamlit after changing Python inference code. Missing/mismatched models produce an error rather than silently using legacy models.
 
+### Hugging Face Space deployment
+
+For a remote Space, keep `models/final_decision_v1/` in the deployed repository and set the Space variable `HF_MODEL_DOWNLOAD=1`. The application then downloads missing Transformer snapshots into their expected local model directories before loading them. Set `DISTILBERT_MODEL_REPO` to the exact final corrected model repository (default: `Artiomg1/truthlens-distilbert`); `BERT_MODEL_REPO` is optional for the ADMIN comparison view. Public repositories need no token. For private repositories, add `HF_TOKEN` as a Space secret. Do not enable `HF_HUB_OFFLINE` or `TRANSFORMERS_OFFLINE` in this deployment mode.
+
 Final labels, ordered by project ID:
 
 1. Native Advertising
