@@ -16,7 +16,12 @@ MODEL_PATHS = {
     "Logistic Regression": ROOT / "models/logistic_regression_six_category_final",
 }
 RESULT_PATHS = {name: ROOT / "results" / path.name for name, path in MODEL_PATHS.items()}
-MAPPING = json.loads((MODEL_PATHS["DistilBERT"] / "label_mapping.json").read_text(encoding="utf-8"))
+_mapping_path = MODEL_PATHS["DistilBERT"] / "label_mapping.json"
+if _mapping_path.is_file():
+    MAPPING = json.loads(_mapping_path.read_text(encoding="utf-8"))
+else:
+    _deployment_path = ROOT / "models/final_decision_v1/deployment.json"
+    MAPPING = json.loads(_deployment_path.read_text(encoding="utf-8"))["label_mapping"]
 CATEGORIES = {int(key): value for key, value in MAPPING["project_id_to_category"].items()}
 METRICS = ["accuracy", "macro_precision", "macro_recall", "macro_f1", "weighted_f1"]
 

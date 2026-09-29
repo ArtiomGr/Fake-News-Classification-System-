@@ -9,7 +9,7 @@ import os
 from threading import RLock
 from time import perf_counter
 
-if os.getenv("HF_MODEL_DOWNLOAD") == "1":
+if os.getenv("HF_MODEL_DOWNLOAD") == "1" or os.getenv("SPACE_ID"):
     os.environ.pop("HF_HUB_OFFLINE", None)
     os.environ.pop("TRANSFORMERS_OFFLINE", None)
 else:
@@ -26,6 +26,8 @@ MODEL_NAMES = tuple(MODEL_PATHS)
 TRANSFORMER_MAX_LENGTH = 512
 CHUNK_OVERLAP_TOKENS = 16
 MAX_INPUT_CHARACTERS = 50_000
+REMOTE_MODEL_DOWNLOAD = (os.getenv("HF_MODEL_DOWNLOAD") == "1"
+                          or bool(os.getenv("SPACE_ID")))
 REMOTE_MODEL_REPOS = {
     "BERT": os.getenv("BERT_MODEL_REPO", "Artiomg1/truthlens-bert-base"),
     "DistilBERT": os.getenv("DISTILBERT_MODEL_REPO", "Artiomg1/truthlens-distilbert"),
@@ -45,7 +47,7 @@ def _required_artifacts(model_name):
 
 def _ensure_remote_model(model_name):
     """Download a missing Transformer snapshot when remote deployment opts in."""
-    if model_name not in REMOTE_MODEL_REPOS or os.getenv("HF_MODEL_DOWNLOAD") != "1":
+    if model_name not in REMOTE_MODEL_REPOS or not REMOTE_MODEL_DOWNLOAD:
         return
     path = MODEL_PATHS[model_name]
     if all((path / filename).is_file() for filename in _required_artifacts(model_name)):
@@ -91,8 +93,8 @@ def get_model_metadata(model_name="DistilBERT"):
     to_project = {int(k): int(v) for k, v in mapping["internal_id_to_project_id"].items()}
     if set(projects) != set(range(1, 7)) or set(internal) != set(range(6)):
         raise ValueError("Expected exactly six final project categories")
-    source_plan = read_json(DISTIL_RESULTS / "training_plan.json")
     if model_name != "DistilBERT":
+        source_plan = read_json(DISTIL_RESULTS / "training_plan.json")
         experiment = read_json(path / "experiment.json")
         if any(experiment[key] != source_plan[key] for key in ("dataset_sha256", "split_manifest_sha256")):
             raise ValueError(f"{model_name} was not trained on the frozen final dataset/split")
