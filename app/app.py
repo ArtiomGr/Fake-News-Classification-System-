@@ -15,7 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / 'src') not in sys.path:
     sys.path.insert(0, str(ROOT / 'src'))
 import final_decision
+from database import save_analysis
 from predict import MAX_INPUT_CHARACTERS, artifact_fingerprint
+from sentiment import analyze_vader_sentiment
 
 EVIDENCE = ROOT / 'results/final_decision_v1'
 APP_NAME = 'Fake News & Content Classification System'
@@ -136,8 +138,12 @@ def user_view():
             try:
                 with st.spinner('Analyzing your text… The first analysis may take longer.'):
                     configure_inference()
-                    result = final_decision.predict_final(text, system='probability_only')
-                st.session_state['analysis'] = {'text': text, 'signature': signature, 'result': result}
+                    result = final_decision.predict_final(text, system='vader_fusion')
+                    sentiment = analyze_vader_sentiment(text)
+                save_analysis(text, result)
+                st.session_state['analysis'] = {
+                    'text': text, 'signature': signature, 'result': result, 'sentiment': sentiment,
+                }
             except ValueError as error:
                 message = f'{type(error).__name__}: {error}'
                 print(f'[prediction-error] {message}', flush=True)
@@ -159,9 +165,21 @@ def user_view():
             category, confidence = st.columns([3, 1])
             category.metric('Final category', result['predicted_label'])
             confidence.metric('Confidence', f"{result['confidence']:.2%}")
+        sentiment = analysis['sentiment']
+        st.subheader('Sentiment analysis')
+        sentiment_columns = st.columns(4)
+        sentiment_columns[0].metric('Overall', sentiment['sentiment_label'])
+        sentiment_columns[1].metric('Positive', f"{sentiment['positive']:.1%}")
+        sentiment_columns[2].metric('Neutral', f"{sentiment['neutral']:.1%}")
+        sentiment_columns[3].metric('Negative', f"{sentiment['negative']:.1%}")
+        st.bar_chart(pd.DataFrame({
+            'Positive': [sentiment['positive']],
+            'Neutral': [sentiment['neutral']],
+            'Negative': [sentiment['negative']],
+        }, index=['Sentiment']), y_label='Share')
     elif analysis:
         reset_results()
-    st.caption('The system chooses among six content categories. Confidence is a model estimate, not verification that a claim is true or false.')
+    st.caption('The final category uses DistilBERT probabilities and VADER sentiment features. Confidence is a model estimate, not verification that a claim is true or false.')
 
 
 def models_panel(classifiers):
@@ -194,7 +212,7 @@ def models_panel(classifiers):
 def decisions_panel(decisions):
     st.subheader('Does a Decision Layer help?')
     st.markdown('**A** uses DistilBERT alone. **B** learns from its six probabilities. **C** adds four VADER sentiment features to those probabilities.')
-    st.success('Selected for USER: B · Corrected DistilBERT → probability-only Decision Layer')
+    st.success('Selected for USER: C · Corrected DistilBERT + VADER Fusion')
     st.markdown('#### Selection evidence · nested validation OOF')
     metrics_table(decisions[decisions.split == 'validation_nested_oof'])
     st.caption('Selection used nested grouped cross-validation on the validation partition: 5 outer folds, 4 inner folds. Final layers were refit on validation only.')
@@ -274,9 +292,9 @@ def architecture_panel():
     <div class="flow-step"><b>4 · Final result</b><small>One category<br>One confidence value</small></div>
     </div>''', unsafe_allow_html=True)
     st.write('Long documents use 512-token windows with 16-token overlap; document probabilities are the mean of window probabilities. The final Decision Layer operates on that six-probability vector.')
-    st.markdown('**USER:** calls `predict_final(text, system="probability_only")`. Models load only when Analyze is pressed; the existing inference cache reuses the selected classifier.')
+    st.markdown('**USER:** calls `predict_final(text, system="vader_fusion")`. Models load only when Analyze is pressed; the existing inference cache reuses the selected classifier.')
     st.markdown('**ADMIN:** reads saved metrics, figures and verification records. It performs no training, model comparison inference or experiment reruns.')
-    st.caption('VADER is part of experimental system C only. It is not used by the selected USER prediction path. Model and layer hashes, class mapping and feature order are checked by the existing prediction API.')
+    st.caption('VADER sentiment features participate in the selected USER prediction path. Model and layer hashes, class mapping and feature order are checked by the existing prediction API.')
     st.markdown('#### Supported categories')
     st.dataframe(pd.DataFrame({'ID': list(final_decision.CATEGORIES), 'Category': list(final_decision.CATEGORIES.values())}),
                  hide_index=True, width='stretch')
