@@ -1,11 +1,15 @@
 """USER inference and ADMIN presentation of the frozen Phase 1–5 evidence."""
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+
+# The public model repository is fetched automatically if the deployed app lacks weights.
+os.environ.setdefault('HF_MODEL_DOWNLOAD', '1')
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / 'src') not in sys.path:
