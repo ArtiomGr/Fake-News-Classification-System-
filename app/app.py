@@ -15,7 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / 'src') not in sys.path:
     sys.path.insert(0, str(ROOT / 'src'))
 import final_decision
-from predict import MAX_INPUT_CHARACTERS, artifact_fingerprint
+from database import save_analysis
+from predict import MAX_INPUT_CHARACTERS, artifact_fingerprint, predict_model
 
 EVIDENCE = ROOT / 'results/final_decision_v1'
 APP_NAME = 'Fake News & Content Classification System'
@@ -97,14 +98,9 @@ def clear_analysis():
 
 
 def final_signature():
-    """Invalidate displayed results when the selected model/layer files change."""
-    base = tuple(item for item in artifact_fingerprint() if item[0] in ('DistilBERT', 'registry'))
-    layer = []
-    for name in ('deployment.json', 'probability_only.joblib'):
-        path = final_decision.ARTIFACT_DIR / name
-        stat = path.stat() if path.is_file() else None
-        layer.append((name, stat.st_mtime_ns if stat else None, stat.st_size if stat else None))
-    return base + tuple(layer)
+    """Invalidate results when the production classifier or registry changes."""
+    return (('user_workflow', 'classifier_alone'),) + tuple(
+        item for item in artifact_fingerprint() if item[0] in ('DistilBERT', 'registry'))
 
 
 @st.cache_resource(show_spinner=False)
@@ -136,8 +132,12 @@ def user_view():
             try:
                 with st.spinner('Analyzing your text… The first analysis may take longer.'):
                     configure_inference()
-                    result = final_decision.predict_final(text, system='probability_only')
-                st.session_state['analysis'] = {'text': text, 'signature': signature, 'result': result}
+                    result = predict_model(text, 'DistilBERT')
+                    result = dict(result, system='classifier_alone', classifier=result['model_name'])
+                save_analysis(text, result)
+                st.session_state['analysis'] = {
+                    'text': text, 'signature': signature, 'result': result,
+                }
             except ValueError as error:
                 message = f'{type(error).__name__}: {error}'
                 print(f'[prediction-error] {message}', flush=True)
@@ -158,10 +158,10 @@ def user_view():
         with st.container(border=True):
             category, confidence = st.columns([3, 1])
             category.metric('Final category', result['predicted_label'])
-            confidence.metric('Confidence', f"{result['confidence']:.2%}")
+            confidence.metric('Model confidence', f"{result['confidence']:.2%}")
     elif analysis:
         reset_results()
-    st.caption('The system chooses among six content categories. Confidence is a model estimate, not verification that a claim is true or false.')
+    st.caption('The final category and confidence come directly from the corrected DistilBERT classifier. Model confidence is an estimate, not verification that a claim is true or false.')
 
 
 def models_panel(classifiers):
@@ -194,7 +194,8 @@ def models_panel(classifiers):
 def decisions_panel(decisions):
     st.subheader('Does a Decision Layer help?')
     st.markdown('**A** uses DistilBERT alone. **B** learns from its six probabilities. **C** adds four VADER sentiment features to those probabilities.')
-    st.success('Selected for USER: B · Corrected DistilBERT → probability-only Decision Layer')
+    st.success('Selected for USER: A · Corrected DistilBERT alone')
+    st.caption('Systems B (`probability_only`) and C (`vader_fusion`) remain historical experiments.')
     st.markdown('#### Selection evidence · nested validation OOF')
     metrics_table(decisions[decisions.split == 'validation_nested_oof'])
     st.caption('Selection used nested grouped cross-validation on the validation partition: 5 outer folds, 4 inner folds. Final layers were refit on validation only.')
@@ -241,7 +242,7 @@ def runtime_panel():
     runtime = read_json('runtime_benchmark.json')
     st.caption(f"Measured on CPU · {runtime['torch_threads']} PyTorch threads · {runtime['platform']}")
     frame = read_csv('runtime_latency_summary.csv')
-    selected = frame[frame.system == 'probability_only'].set_index('input_size')
+    selected = frame[frame.system == 'classifier_alone'].set_index('input_size')
     for col, size, title in zip(st.columns(4), ['short', 'medium', 'long', 'near_limit'],
                                 ['Short · 101 chars', 'Medium · 791 chars', 'Long · 5,939 chars', 'Near limit · 49,999 chars']):
         col.metric(title, f"{selected.loc[size, 'p95_seconds']:.3f} s")
@@ -270,13 +271,12 @@ def architecture_panel():
     st.markdown('''<div class="flow">
     <div class="flow-step"><b>1 · Text</b><small>Whitespace normalization<br>50,000-character limit</small></div>
     <div class="flow-step"><b>2 · Corrected DistilBERT</b><small>Frozen local classifier<br>Six category probabilities</small></div>
-    <div class="flow-step"><b>3 · Decision Layer</b><small>Saved scaler + multinomial Logistic Regression<br>Probability inputs only</small></div>
-    <div class="flow-step"><b>4 · Final result</b><small>One category<br>One confidence value</small></div>
+    <div class="flow-step"><b>3 · Final result</b><small>One category<br>One confidence value</small></div>
     </div>''', unsafe_allow_html=True)
-    st.write('Long documents use 512-token windows with 16-token overlap; document probabilities are the mean of window probabilities. The final Decision Layer operates on that six-probability vector.')
-    st.markdown('**USER:** calls `predict_final(text, system="probability_only")`. Models load only when Analyze is pressed; the existing inference cache reuses the selected classifier.')
+    st.write('Long documents use 512-token windows with 16-token overlap; document probabilities are the mean of window probabilities. The category is the highest-probability class and confidence is its classifier probability.')
+    st.markdown('**USER:** calls `predict_model(text, "DistilBERT")`. Models load only when Analyze is pressed; the existing inference cache reuses the selected classifier.')
     st.markdown('**ADMIN:** reads saved metrics, figures and verification records. It performs no training, model comparison inference or experiment reruns.')
-    st.caption('VADER is part of experimental system C only. It is not used by the selected USER prediction path. Model and layer hashes, class mapping and feature order are checked by the existing prediction API.')
+    st.caption('USER inference uses only corrected DistilBERT. VADER and decision layers remain available for experimental evaluation. The existing classifier loading and class-mapping checks are preserved.')
     st.markdown('#### Supported categories')
     st.dataframe(pd.DataFrame({'ID': list(final_decision.CATEGORIES), 'Category': list(final_decision.CATEGORIES.values())}),
                  hide_index=True, width='stretch')
