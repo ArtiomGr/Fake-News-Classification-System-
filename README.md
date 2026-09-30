@@ -2,7 +2,7 @@
 
 **Six-Category Text Classification and Sentiment Analysis**
 
-The final university-project dashboard compares **BERT**, **corrected DistilBERT**, and **TF-IDF + Logistic Regression** on the same input. The USER prediction path combines corrected DistilBERT probabilities with **VADER** sentiment features. All application inference is local; no API, downloads or training occur when running the app.
+The final university-project dashboard compares **BERT**, **corrected DistilBERT**, and **TF-IDF + Logistic Regression** on the same input. The standard USER prediction uses only the corrected six-category DistilBERT classifier; its category and confidence come directly from the classifier probabilities. VADER and Systems B/C remain experimental components outside the USER path. All application inference is local; no API, downloads or training occur when running the app.
 
 ## Partner setup after cloning or pulling
 
@@ -84,7 +84,7 @@ Final labels, ordered by project ID:
 5. News Parody
 6. Fabrication
 
-Saved label mappings translate internal IDs 0–5 to project IDs 1–6. Short Transformer input uses direct evaluation-mode inference. Longer input uses complete 512-token windows including special tokens, 16-token overlap, and arithmetic-mean window probabilities. LR processes full text; the USER decision layer combines Transformer probabilities with VADER features. Input limit: 50,000 characters. Pasted app text is not saved to disk; anonymous analysis metadata is saved to JSON history.
+Saved label mappings translate internal IDs 0–5 to project IDs 1–6. Short Transformer input uses direct evaluation-mode inference. Longer input uses complete 512-token windows including special tokens, 16-token overlap, and arithmetic-mean window probabilities. LR processes full text in the experimental comparison; USER inference uses the corrected DistilBERT probabilities directly, without a decision layer. Input limit: 50,000 characters. Pasted app text is not saved to disk; anonymous analysis metadata is saved to JSON history with no VADER or sentiment fields.
 
 ## Dataset, metrics and provenance
 

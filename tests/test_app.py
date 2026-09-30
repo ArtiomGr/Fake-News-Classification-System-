@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+import tempfile
 from unittest.mock import patch
 
 from streamlit.testing.v1 import AppTest
@@ -11,11 +12,31 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 import final_decision
 import predict
+import database
+import sentiment
 
 TRAVELPRO = 'This article is brought to you by TravelPro. Book your next vacation with our exclusive summer deals.'
 
 
 class FinalDashboardTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.history_path = Path(directory.name) / 'history.json'
+        original_save = database.save_analysis
+        saver = patch.object(database, 'save_analysis',
+                             side_effect=lambda text, result: original_save(text, result, self.history_path))
+        saver.start()
+        self.addCleanup(saver.stop)
+        for module, name in ((final_decision, 'predict_final'),
+                             (final_decision, 'vader_features'),
+                             (sentiment, 'analyze_vader_sentiment'),
+                             (predict, 'predict_sentiment')):
+            guard = patch.object(module, name, side_effect=AssertionError('USER must use only the classifier'))
+            mocked = guard.start()
+            self.addCleanup(guard.stop)
+            self.addCleanup(mocked.assert_not_called)
+
     def app(self):
         app = AppTest.from_file(str(ROOT / 'app/app.py'), default_timeout=180).run()
         self.assertEqual(len(app.exception), 0)
@@ -37,7 +58,7 @@ class FinalDashboardTests(unittest.TestCase):
 
     def test_empty_input_does_not_invoke_inference(self):
         app = self.app()
-        with patch.object(final_decision, 'predict_final') as call:
+        with patch.object(predict, 'predict_model') as call:
             self.analyze(app, '  ')
             call.assert_not_called()
         self.assertEqual(app.warning[0].value, 'Please enter text before running the analysis.')
@@ -46,21 +67,29 @@ class FinalDashboardTests(unittest.TestCase):
     def test_actual_final_path_one_category_confidence_and_clear(self):
         app = self.app()
         self.analyze(app)
-        expected = final_decision.predict_final(TRAVELPRO, system='vader_fusion')
+        expected = predict.predict_model(TRAVELPRO, 'DistilBERT')
         self.assertEqual(len(app.error), 0)
         result = app.session_state['analysis']['result']
-        self.assertEqual(result['system'], 'vader_fusion')
+        self.assertEqual(result['system'], 'classifier_alone')
         self.assertEqual(result['classifier'], 'DistilBERT')
         self.assertEqual(result['predicted_label'], 'Native Advertising')
         self.assertAlmostEqual(result['confidence'], expected['confidence'], places=10)
-        self.assertAlmostEqual(result['confidence'], 0.9981574661471784, places=5)
-        self.assertEqual(len(app.metric), 6)
+        self.assertEqual(result['probability_by_label'], expected['probability_by_label'])
+        self.assertEqual(result['confidence'], expected['confidence'])
+        self.assertNotIn('sentiment', app.session_state['analysis'])
+        rows = database.get_recent_analyses(database_path=self.history_path)
+        self.assertEqual(rows[0]['confidence'], expected['confidence'])
+        self.assertEqual(rows[0]['system'], 'classifier_alone')
+        self.assertEqual(set(rows[0]), {'id', 'analyzed_at', 'text_sha256', 'text_length',
+                                      'system', 'classifier', 'predicted_label', 'confidence',
+                                      'number_of_chunks', 'inference_seconds'})
+        self.assertEqual(len(app.metric), 2)
         self.assertEqual(app.metric[0].label, 'Final category')
         self.assertEqual(app.metric[1].label, 'Model confidence')
         self.assertEqual(app.metric[1].value, f"{expected['confidence']:.2%}")
         self.assertEqual(len(app.dataframe), 0)
         app.run()
-        self.assertEqual(len(app.metric), 6)
+        self.assertEqual(len(app.metric), 2)
         app.button(key='clear').click().run()
         self.assertEqual(app.text_area(key='input_text').value, '')
         self.assertEqual(len(app.metric), 0)
@@ -79,9 +108,9 @@ class FinalDashboardTests(unittest.TestCase):
 
     def test_prediction_failure_clears_old_result_without_fallback(self):
         app = self.analyze(self.app())
-        with patch.object(final_decision, 'predict_final', side_effect=RuntimeError('Unavailable layer')) as call:
+        with patch.object(predict, 'predict_model', side_effect=RuntimeError('Unavailable classifier')) as call:
             self.analyze(app)
-            call.assert_called_once_with(TRAVELPRO, system='vader_fusion')
+            call.assert_called_once_with(TRAVELPRO, 'DistilBERT')
         self.assertIn('Analysis is currently unavailable', app.error[0].value)
         self.assertEqual(len(app.metric), 0)
 
@@ -93,7 +122,7 @@ class FinalDashboardTests(unittest.TestCase):
 
     def test_admin_saved_evidence_without_inference(self):
         app = self.app()
-        with patch.object(final_decision, 'predict_final', side_effect=AssertionError('ADMIN must not infer')):
+        with patch.object(predict, 'predict_model', side_effect=AssertionError('ADMIN must not infer')):
             app.radio(key='view').set_value('ADMIN').run()
         self.assertEqual(len(app.exception), 0)
         self.assertEqual(len(app.error), 0)

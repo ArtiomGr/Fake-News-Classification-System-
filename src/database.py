@@ -38,7 +38,7 @@ def _write_history(database_path, history):
 
 
 def save_analysis(text, result, database_path=DEFAULT_HISTORY_PATH):
-	"""Store result metadata without retaining the submitted text."""
+	"""Store only approved prediction metadata; omit text and sentiment fields."""
 	if not text or not isinstance(result, dict):
 		raise ValueError("Text and prediction result are required")
 	initialize_database(database_path)

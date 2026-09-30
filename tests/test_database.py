@@ -14,12 +14,19 @@ from database import get_recent_analyses, save_analysis
 class DatabaseTests(unittest.TestCase):
     def test_save_and_read_analysis_without_storing_text(self):
         result = {
-            "system": "probability_only",
+            "system": "classifier_alone",
             "classifier": "DistilBERT",
             "predicted_label": "Native Advertising",
             "confidence": 0.9,
             "number_of_chunks": 1,
             "inference_seconds": 0.12,
+            "sentiment": {"compound": 0.8},
+            "sentiment_label": "Positive",
+            "compound": 0.8,
+            "positive": 0.8,
+            "neutral": 0.2,
+            "negative": 0.0,
+            "vader_compound": 0.8,
         }
         with tempfile.TemporaryDirectory() as directory:
             database_path = Path(directory) / "history.json"
@@ -34,6 +41,10 @@ class DatabaseTests(unittest.TestCase):
             saved = json.loads(database_path.read_text(encoding="utf-8"))
             self.assertEqual(len(saved), 1)
             self.assertNotIn("text", saved[0])
+            self.assertEqual(set(saved[0]), {
+                "id", "analyzed_at", "text_sha256", "text_length", "system", "classifier",
+                "predicted_label", "confidence", "number_of_chunks", "inference_seconds",
+            })
 
 
 if __name__ == "__main__":
