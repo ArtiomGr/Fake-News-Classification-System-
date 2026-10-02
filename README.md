@@ -1,6 +1,6 @@
-# Fake News & Content Classification System
+# VerifyAi
 
-**Six-Category Text Classification and Sentiment Analysis**
+**Six-Category Content Intelligence and Classification**
 
 The final university-project dashboard compares **BERT**, **corrected DistilBERT**, and **TF-IDF + Logistic Regression** on the same input. The standard USER prediction uses only the corrected six-category DistilBERT classifier; its category and confidence come directly from the classifier probabilities. VADER and Systems B/C remain experimental components outside the USER path. All application inference is local; no API, downloads or training occur when running the app.
 
