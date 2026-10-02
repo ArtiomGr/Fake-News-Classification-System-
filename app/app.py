@@ -19,7 +19,7 @@ from database import save_analysis
 from predict import MAX_INPUT_CHARACTERS, artifact_fingerprint, predict_model
 
 EVIDENCE = ROOT / 'results/final_decision_v1'
-APP_NAME = 'VerifyAi'
+APP_NAME = 'VerifAI'
 SYSTEM_NAMES = {
     'classifier_alone': 'A · DistilBERT alone',
     'probability_only': 'B · Probability-only Decision Layer',
@@ -125,9 +125,9 @@ def configure_inference():
 
 
 def user_view():
-    st.markdown('''<div class="hero"><div class="eyebrow">VerifyAi · Content intelligence</div>
+    st.markdown('''<div class="hero"><div class="eyebrow">VerifAI · Content intelligence</div>
     <h1>See what a story is really saying.</h1>
-    <p>Paste a headline, post or article. VerifyAi reads its language and returns the most likely content category with a transparent confidence signal.</p></div>''', unsafe_allow_html=True)
+    <p>Paste a headline, post or article. VerifAI reads its language and returns the most likely content category with a transparent confidence signal.</p></div>''', unsafe_allow_html=True)
     st.subheader('Text to analyze')
     text = st.text_area('Text to analyze', key='input_text', height=230,
                         placeholder='Paste your text here…', max_chars=MAX_INPUT_CHARACTERS,
@@ -324,7 +324,7 @@ def verification_panel():
 
 
 def admin_view():
-    st.markdown('''<div class="hero"><div class="eyebrow">VerifyAi · Research console</div>
+    st.markdown('''<div class="hero"><div class="eyebrow">VerifAI · Research console</div>
     <h1>Evidence behind every decision.</h1>
     <p>Compare classifiers, inspect the decision experiments and review the measured limits of the selected system.</p></div>''', unsafe_allow_html=True)
     st.caption('Saved Phase 1–5 evidence · final_decision_v1 · local presentation view')
@@ -339,7 +339,7 @@ def admin_view():
     with tabs[5]: verification_panel()
 
 
-st.markdown(f'<div class="brandbar"><div class="brand">Verify<span>Ai</span></div><div class="status">Local analysis system · v1</div></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="brandbar"><div class="brand">Verif<span>AI</span></div><div class="status">Local analysis system · v1</div></div>', unsafe_allow_html=True)
 view = st.radio('View', ['USER', 'ADMIN'], horizontal=True, key='view', on_change=reset_results)
 if view == 'USER':
     user_view()
@@ -349,4 +349,4 @@ else:
     except (OSError, ValueError, KeyError) as error:
         st.error('Saved research evidence could not be displayed. Restore the verified results before presenting this view.')
         logging.getLogger(__name__).exception('Research evidence unavailable: %s', error)
-st.markdown('<div class="footer">VerifyAi · Six-category content intelligence · Local inference</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">VerifAI · Six-category content intelligence · Local inference</div>', unsafe_allow_html=True)

@@ -4,7 +4,7 @@ Repository handoff note: this report records the original local finalization. Ru
 
 ## Scope and final architecture
 
-The application is **VerifyAi**, subtitled **Six-Category Content Intelligence and Classification**. Its workflow is text input, three classifier cards, descriptive model agreement, probability tabs, separate VADER sentiment, and technical information. No GitHub push or deployment was performed. All inference is local.
+The application is **VerifAI**, subtitled **Six-Category Content Intelligence and Classification**. Its workflow is text input, three classifier cards, descriptive model agreement, probability tabs, separate VADER sentiment, and technical information. No GitHub push or deployment was performed. All inference is local.
 
 Final project labels, in display order: **1 Native Advertising; 2 News Satire; 3 Propaganda; 4 Manipulation; 5 News Parody; 6 Fabrication.** Internal model IDs are 0–5; the saved mapping translates them to project IDs 1–6. No old model's outputs were renamed to create this task.
 

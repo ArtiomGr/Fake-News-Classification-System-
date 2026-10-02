@@ -1,4 +1,4 @@
-# VerifyAi
+# VerifAI
 
 **Six-Category Content Intelligence and Classification**
 
