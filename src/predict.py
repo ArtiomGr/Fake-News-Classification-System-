@@ -285,7 +285,7 @@ def predict_sentiment(text):
 
 
 if __name__ == "__main__":
-    print("Fake News & Content Classification System")
+    print("VerifyAi")
     while True:
         text = input("\nEnter text (or EXIT):\n> ")
         if text.strip().lower() == "exit":

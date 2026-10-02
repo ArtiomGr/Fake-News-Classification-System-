@@ -19,7 +19,7 @@ from database import save_analysis
 from predict import MAX_INPUT_CHARACTERS, artifact_fingerprint, predict_model
 
 EVIDENCE = ROOT / 'results/final_decision_v1'
-APP_NAME = 'Fake News & Content Classification System'
+APP_NAME = 'VerifyAi'
 SYSTEM_NAMES = {
     'classifier_alone': 'A · DistilBERT alone',
     'probability_only': 'B · Probability-only Decision Layer',
@@ -32,27 +32,40 @@ SPLIT_NAMES = {'train': 'TRAIN', 'validation': 'Validation', 'test': 'Test',
 st.set_page_config(page_title=APP_NAME, page_icon='◈', layout='wide', initial_sidebar_state='collapsed')
 st.markdown('''
 <style>
-.stApp { background:#f5f7fb; }
-.block-container { max-width:1320px; padding-top:2rem; padding-bottom:3rem; }
+:root { --ink:#10233d; --navy:#102b46; --blue:#1f5277; --mist:#eef3f0; --lime:#c8ef70; --coral:#ff846b; --muted:#65758a; }
+.stApp { background:var(--mist); color:var(--ink); }
+.block-container { max-width:1280px; padding-top:1.4rem; padding-bottom:3rem; }
 [data-testid="stHeader"] { background:transparent; }
-h1,h2,h3 { color:#162640; letter-spacing:-.025em; }
-.hero { background:linear-gradient(115deg,#142641,#233d64); padding:32px 36px;
-        border-radius:20px; margin:12px 0 24px; color:#fff; }
-.hero h1 { color:#fff; font-size:clamp(1.8rem,3.5vw,2.65rem); margin:6px 0 10px; }
-.hero p { color:#dce6f5; max-width:780px; margin:0; line-height:1.6; }
-.eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#a6c9ff; }
-.stButton button,.stDownloadButton button { border-radius:10px; min-height:44px; }
-.stTextArea textarea { border-radius:12px; font-size:1rem; }
-[data-testid="stMetricValue"] { color:#183b67; }
-[data-testid="stMetricLabel"] { color:#52647c; }
-[data-testid="stVerticalBlockBorderWrapper"] { border-radius:16px; }
-button[data-baseweb="tab"] { font-weight:600; }
+h1,h2,h3 { color:var(--ink); letter-spacing:-.035em; font-family:Georgia, 'Times New Roman', serif; }
+h2 { font-size:1.6rem; }
+.brandbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.brand { color:var(--ink); font-size:1.35rem; font-weight:800; letter-spacing:-.05em; }
+.brand span { color:var(--blue); }
+.status { color:var(--blue); font-size:.72rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+.hero { position:relative; overflow:hidden; background:var(--navy); padding:42px 44px 38px;
+    border-radius:4px 28px 4px 28px; margin:8px 0 28px; color:#fff; box-shadow:0 18px 40px rgba(16,43,70,.16); }
+.hero:after { content:''; position:absolute; width:170px; height:170px; right:8%; top:-78px; border:30px solid var(--lime); border-radius:50%; opacity:.9; }
+.hero h1 { position:relative; z-index:1; color:#fff; font-size:clamp(2.1rem,4vw,3.8rem); line-height:1.03; margin:8px 0 14px; max-width:700px; }
+.hero p { position:relative; z-index:1; color:#d7e4e8; max-width:650px; margin:0; line-height:1.65; font-size:1.03rem; }
+.eyebrow { position:relative; z-index:1; font-size:.7rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--lime); }
+.stButton button,.stDownloadButton button { border-radius:3px; min-height:46px; font-weight:750; }
+.stButton button[kind="primary"] { background:var(--coral); border-color:var(--coral); color:#fff; }
+.stButton button[kind="primary"]:hover { background:#e96e58; border-color:#e96e58; }
+.stTextArea textarea { border:1px solid #cbd7d6; border-radius:4px; font-size:1rem; background:#fff; }
+[data-testid="stMetricValue"] { color:var(--blue); }
+[data-testid="stMetricLabel"] { color:var(--muted); font-weight:700; }
+[data-testid="stMetric"] { background:var(--lime); border-radius:4px; padding:16px 18px; }
+[data-testid="stVerticalBlockBorderWrapper"] { border:1px solid #d3dfdc; border-radius:4px; background:rgba(255,255,255,.72); }
+button[data-baseweb="tab"] { font-weight:700; }
+.result-card { background:var(--lime); border-radius:4px 22px 4px 22px; padding:22px 24px; }
+.result-card .label { color:var(--navy); font-size:.72rem; font-weight:800; letter-spacing:.15em; text-transform:uppercase; }
+.result-card .value { color:var(--navy); font:700 2rem Georgia, 'Times New Roman', serif; margin-top:6px; }
 .flow { display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; margin:18px 0; }
-.flow-step { flex:1; min-width:160px; background:#fff; border:1px solid #d7e1ed;
-             border-top:3px solid #3877bc; border-radius:12px; padding:18px; color:#162640; }
-.flow-step small { display:block; color:#60728a; margin-top:7px; line-height:1.5; }
-.footer { color:#63758d; font-size:.8rem; border-top:1px solid #dce4ef; margin-top:30px; padding-top:16px; }
-@media(max-width:650px) { .hero { padding:24px; } .block-container { padding:1rem; } }
+.flow-step { flex:1; min-width:160px; background:#fff; border:1px solid #d3dfdc;
+         border-top:3px solid var(--coral); border-radius:4px; padding:18px; color:var(--ink); }
+.flow-step small { display:block; color:var(--muted); margin-top:7px; line-height:1.5; }
+.footer { color:var(--muted); font-size:.8rem; border-top:1px solid #cdd9d7; margin-top:34px; padding-top:16px; }
+@media(max-width:650px) { .hero { padding:28px 24px; } .hero:after { right:-70px; } .block-container { padding:1rem; } .brandbar { align-items:flex-start; flex-direction:column; gap:6px; } }
 </style>
 ''', unsafe_allow_html=True)
 
@@ -112,9 +125,9 @@ def configure_inference():
 
 
 def user_view():
-    st.markdown('''<div class="hero"><div class="eyebrow">USER · Content analysis</div>
-    <h1>Understand the category of a text.</h1>
-    <p>Paste a headline, post or article to receive one category and its model confidence.</p></div>''', unsafe_allow_html=True)
+    st.markdown('''<div class="hero"><div class="eyebrow">VerifyAi · Content intelligence</div>
+    <h1>See what a story is really saying.</h1>
+    <p>Paste a headline, post or article. VerifyAi reads its language and returns the most likely content category with a transparent confidence signal.</p></div>''', unsafe_allow_html=True)
     st.subheader('Text to analyze')
     text = st.text_area('Text to analyze', key='input_text', height=230,
                         placeholder='Paste your text here…', max_chars=MAX_INPUT_CHARACTERS,
@@ -311,8 +324,8 @@ def verification_panel():
 
 
 def admin_view():
-    st.markdown('''<div class="hero"><div class="eyebrow">ADMIN · Research evidence</div>
-    <h1>From evaluation to one final system.</h1>
+    st.markdown('''<div class="hero"><div class="eyebrow">VerifyAi · Research console</div>
+    <h1>Evidence behind every decision.</h1>
     <p>Compare classifiers, inspect the decision experiments and review the measured limits of the selected system.</p></div>''', unsafe_allow_html=True)
     st.caption('Saved Phase 1–5 evidence · final_decision_v1 · local presentation view')
     classifiers, decisions = read_csv('classifier_comparison.csv'), read_csv('decision_comparison.csv')
@@ -326,7 +339,7 @@ def admin_view():
     with tabs[5]: verification_panel()
 
 
-st.markdown(f'**{APP_NAME}**')
+st.markdown(f'<div class="brandbar"><div class="brand">Verify<span>Ai</span></div><div class="status">Local analysis system · v1</div></div>', unsafe_allow_html=True)
 view = st.radio('View', ['USER', 'ADMIN'], horizontal=True, key='view', on_change=reset_results)
 if view == 'USER':
     user_view()
@@ -336,4 +349,4 @@ else:
     except (OSError, ValueError, KeyError) as error:
         st.error('Saved research evidence could not be displayed. Restore the verified results before presenting this view.')
         logging.getLogger(__name__).exception('Research evidence unavailable: %s', error)
-st.markdown('<div class="footer">University Final Project · Six-category content classification · Local inference</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer">VerifyAi · Six-category content intelligence · Local inference</div>', unsafe_allow_html=True)
